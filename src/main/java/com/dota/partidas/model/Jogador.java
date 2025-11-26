@@ -1,11 +1,14 @@
 package com.dota.partidas.model;
 
+import java.util.List;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 
 @Entity
 public class Jogador {
@@ -31,8 +34,13 @@ public class Jogador {
     @JoinColumn(name="time_id")
     private Time time;
 
-    public Jogador(String funcao, String heroisMaisJogados, Long id, int mmr, String nacionalidade, String nickname, String nome, int posicao, Time time) {
+    @OneToMany(mappedBy = "jogador")
+    private List<JogadorPartida> partidas;
+    
+
+    public Jogador(String funcao, String heroisMaisJogados, Long id, int mmr, String nacionalidade, String nickname, String nome, int posicao, Time time, List<JogadorPartida> partidas) {
         this.funcao = funcao;
+        this.partidas = partidas;
         this.heroisMaisJogados = heroisMaisJogados;
         this.id = id;
         this.mmr = mmr;
@@ -113,6 +121,14 @@ public class Jogador {
 
     public void setTime(Time time) {
         this.time = time;
+    }
+
+    public List<JogadorPartida> getPartidas() {
+        return partidas;
+    }
+
+    public void setPartidas(List<JogadorPartida> partidas) {
+        this.partidas = partidas;
     }
 
 
