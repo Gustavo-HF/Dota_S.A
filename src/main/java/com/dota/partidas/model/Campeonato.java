@@ -1,5 +1,6 @@
 package com.dota.partidas.model;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import jakarta.persistence.Entity;
@@ -7,6 +8,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
+import jakarta.validation.constraints.NotBlank;
 
 @Entity
 public class Campeonato {
@@ -14,11 +16,21 @@ public class Campeonato {
     @GeneratedValue(strategy=GenerationType.AUTO)
 
     private Long id;
+
+    @NotBlank(message="O campo de nome do campeonato não pode estar vazio")
     private String nome;
+
+    @NotBlank(message="O campo de modo do campeonato não pode estar vazio e deve ser informado no formato md3 ou md5")
     private String modo;
+
+    @NotBlank(message="O patch em que o campeonato é jogado deve ser informado")
     private String patchCampeonato;
-    private String comecoCamp;
-    private String fimCamp;
+
+    @NotBlank(message="O campo da data de inicio do campeonato não pode estar vazia")
+    private LocalDate comecoCamp;
+
+    @NotBlank(message="O campo de data do fim do campeonato não pode estar vazio")
+    private LocalDate fimCamp;
 
     @OneToMany(mappedBy="partida")
     List<Partida>partidas;
@@ -27,7 +39,7 @@ public class Campeonato {
 
     }
 
-    public Campeonato(String comecoCamp, String fimCamp, Long id, String modo, String nome, List<Partida> partidas, String patchCampeonato) {
+    public Campeonato(LocalDate comecoCamp, LocalDate fimCamp, Long id, String modo, String nome, List<Partida> partidas, String patchCampeonato) {
         this.comecoCamp = comecoCamp;
         this.fimCamp = fimCamp;
         this.id = id;
@@ -69,19 +81,19 @@ public class Campeonato {
         this.patchCampeonato = patchCampeonato;
     }
 
-    public String getComecoCamp() {
+    public LocalDate getComecoCamp() {
         return comecoCamp;
     }
 
-    public void setComecoCamp(String comecoCamp) {
+    public void setComecoCamp(LocalDate comecoCamp) {
         this.comecoCamp = comecoCamp;
     }
 
-    public String getFimCamp() {
+    public LocalDate getFimCamp() {
         return fimCamp;
     }
 
-    public void setFimCamp(String fimCamp) {
+    public void setFimCamp(LocalDate fimCamp) {
         this.fimCamp = fimCamp;
     }
 

@@ -8,6 +8,8 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.MapsId;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
 
 @Entity
 @Table(name="jogador_partida")
@@ -26,14 +28,19 @@ public class JogadorPartida {
     @JoinColumn(name="partida_id")
     private Partida partida;
 
+    @NotBlank(message="O valor do KDA deve estar informado")
     private String kda;
+
+    @Min(value=0, message="O valor do patrimônio líquido não pode ser menor que zero")
+    private int patrimonioLiquidoIndividual;
 
     public JogadorPartida(){
 
     }
 
-    public JogadorPartida(Jogador jogador, String kda, Partida partida) {
+    public JogadorPartida(Jogador jogador, String kda, int patrimonioLiquidoIndividual, Partida partida) {
         this.jogador = jogador;
+        this.patrimonioLiquidoIndividual = patrimonioLiquidoIndividual;
         this.kda = kda;
         this.partida = partida;
     }
@@ -68,6 +75,14 @@ public class JogadorPartida {
 
     public void setKda(String kda) {
         this.kda = kda;
+    }
+
+    public int getPatrimonioLiquidoIndividual() {
+        return patrimonioLiquidoIndividual;
+    }
+
+    public void setPatrimonioLiquidoIndividual(int patrimonioLiquidoIndividual) {
+        this.patrimonioLiquidoIndividual = patrimonioLiquidoIndividual;
     }
 
 

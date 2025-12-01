@@ -2,11 +2,14 @@ package com.dota.partidas.model;
 
 import java.util.List;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 @Entity
 public class Time {
 
@@ -14,11 +17,23 @@ public class Time {
     @GeneratedValue(strategy=GenerationType.AUTO)
 
     private Long id;
+
+    @NotBlank(message="O campo nome não pode estar vazio")
     private String nome;
+
+    @NotBlank(message="Cada time deve ter uma região de " 
+    + "origem cadastrada, por isso este campo não pode ficar vazio")
     private String regiao;
+
+    @Column(unique=true)
     private int classificacaoMundial;
+
+    @NotNull(message="O número de jogadores não pode ser nulo")
     private int numeroJogadores;
+
     private boolean isUltimoCampeaoDoTi;
+
+    @Column(unique=true)
     private int classificacaoCampeonato;
 
     @OneToMany(mappedBy="jogador")

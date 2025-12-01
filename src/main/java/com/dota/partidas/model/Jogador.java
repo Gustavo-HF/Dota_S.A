@@ -2,6 +2,8 @@ package com.dota.partidas.model;
 
 import java.util.List;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -9,6 +11,10 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 
 @Entity
 public class Jogador {
@@ -17,12 +23,30 @@ public class Jogador {
     @GeneratedValue(strategy=GenerationType.AUTO)
     
     private Long id;
+
+    @NotBlank(message="O campo de nome não pode estar vazio")
     private String nome;
+
+    @Column(unique=true)
+    @NotBlank(message="O campo de nickname não pode estar vazio")
     private String nickname;
+
+    @NotBlank(message="O campo posição não pode estar vazio")
+    @Min(value=1, message="As posições devem ir do 1 ao 5")
+    @Max(value=5, message="O número da posição não pode ser maior que 5")
     private int posicao;
+
+    @NotBlank(message="Este campo não pode estar vazio")
     private String nacionalidade;
+
+    @NotBlank(message="Este campo não pode estar vazio")
     private String funcao;
-    private String heroisMaisJogados;
+    
+    @ElementCollection
+    @Size(max=3)
+    private List<String> heroisMaisJogados;
+    
+    @Min(value=6000, message="O valor do mmr para um profissional não pode ser menor do que 6000")
     private int mmr;
     
 
@@ -38,7 +62,7 @@ public class Jogador {
     private List<JogadorPartida> partidas;
     
 
-    public Jogador(String funcao, String heroisMaisJogados, Long id, int mmr, String nacionalidade, String nickname, String nome, int posicao, Time time, List<JogadorPartida> partidas) {
+    public Jogador(String funcao, List<String> heroisMaisJogados, Long id, int mmr, String nacionalidade, String nickname, String nome, int posicao, Time time, List<JogadorPartida> partidas) {
         this.funcao = funcao;
         this.partidas = partidas;
         this.heroisMaisJogados = heroisMaisJogados;
@@ -99,11 +123,11 @@ public class Jogador {
         this.funcao = funcao;
     }
 
-    public String getHeroisMaisJogados() {
+    public List<String> getHeroisMaisJogados() {
         return heroisMaisJogados;
     }
 
-    public void setHeroisMaisJogados(String heroisMaisJogados) {
+    public void setHeroisMaisJogados(List<String> heroisMaisJogados) {
         this.heroisMaisJogados = heroisMaisJogados;
     }
 

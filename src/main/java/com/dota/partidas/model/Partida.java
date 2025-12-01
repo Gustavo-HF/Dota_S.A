@@ -1,7 +1,9 @@
 package com.dota.partidas.model;
 
+import java.time.LocalTime;
 import java.util.List;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -9,6 +11,9 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 @Entity
 public class Partida {
@@ -17,14 +22,28 @@ public class Partida {
     @GeneratedValue(strategy=GenerationType.AUTO)
 
     private Long id;
-    private String patrimonioLiquido;
-    private String diferencaPatrimonioEquipes;
+
+    @Min(value=0, message="O valor mínimo da diferença de patrimônio das duas equipes não pode ser menor que zero")
+    private double diferencaPatrimonioEquipes;
+
+    @NotBlank(message="O campo data não pode estar vazio")
     private String data;
+
+    @Min(value=2, message="O valor mínimo presente no placar de uma partida deve ser de 2 pontos")
     private int pontuacao;
+
+    @NotBlank(message="O campo de picks não pode estar vazio")
     private String picks;
+
+    @NotBlank(message="O campo de bans não pode estar vazio")
     private String bans;
+
+    @Column(unique=true)
+    @NotBlank(message="O campo de mvp não pode estar vazio")
     private String mvp;
-    private byte duracaoPartida;
+    
+    @NotNull(message="O tempo de duração da partida não pode estar nulo")
+    private LocalTime duracaoPartida;
 
     @OneToMany(mappedBy = "partida")
     private List<JogadorPartida> jogadores;
@@ -33,20 +52,29 @@ public class Partida {
     @JoinColumn(name="campeonato_id")
     private Campeonato campeonato;
 
+    @ManyToOne
+    @JoinColumn(name = "timeA_id")
+    private Time timeA;
+
+    @ManyToOne
+    @JoinColumn(name = "timeB_id")
+    private Time timeB;
+
     public Partida(){
 
     }
 
-    public Partida(String bans, String data, String diferencaPatrimonioEquipes, byte duracaoPartida, Long id, List<JogadorPartida> jogadores, String mvp, String patrimonioLiquido, String picks, int pontuacao, Campeonato campeonato) {
+    public Partida(String bans, String data, double diferencaPatrimonioEquipes, LocalTime duracaoPartida, Long id, List<JogadorPartida> jogadores, String mvp, String patrimonioLiquidoIndividual, String picks, int pontuacao, Campeonato campeonato, Time timeA, Time timeB) {
         this.bans = bans;
         this.data = data;
+        this.timeA = timeA;
+        this.timeB = timeB;
         this.campeonato = campeonato;
         this.diferencaPatrimonioEquipes = diferencaPatrimonioEquipes;
         this.duracaoPartida = duracaoPartida;
         this.id = id;
         this.jogadores = jogadores;
         this.mvp = mvp;
-        this.patrimonioLiquido = patrimonioLiquido;
         this.picks = picks;
         this.pontuacao = pontuacao;
     }
@@ -59,19 +87,11 @@ public class Partida {
         this.id = id;
     }
 
-    public String getPatrimonioLiquido() {
-        return patrimonioLiquido;
-    }
-
-    public void setPatrimonioLiquido(String patrimonioLiquido) {
-        this.patrimonioLiquido = patrimonioLiquido;
-    }
-
-    public String getDiferencaPatrimonioEquipes() {
+    public double getDiferencaPatrimonioEquipes() {
         return diferencaPatrimonioEquipes;
     }
 
-    public void setDiferencaPatrimonioEquipes(String diferencaPatrimonioEquipes) {
+    public void setDiferencaPatrimonioEquipes(double diferencaPatrimonioEquipes) {
         this.diferencaPatrimonioEquipes = diferencaPatrimonioEquipes;
     }
 
@@ -115,11 +135,11 @@ public class Partida {
         this.mvp = mvp;
     }
 
-    public byte getDuracaoPartida() {
+    public LocalTime getDuracaoPartida() {
         return duracaoPartida;
     }
 
-    public void setDuracaoPartida(byte duracaoPartida) {
+    public void setDuracaoPartida(LocalTime duracaoPartida) {
         this.duracaoPartida = duracaoPartida;
     }
 
@@ -137,6 +157,22 @@ public class Partida {
 
     public void setCampeonato(Campeonato campeonato) {
         this.campeonato = campeonato;
+    }
+
+    public Time getTimeA() {
+        return timeA;
+    }
+
+    public void setTimeA(Time timeA) {
+        this.timeA = timeA;
+    }
+
+    public Time getTimeB() {
+        return timeB;
+    }
+
+    public void setTimeB(Time timeB) {
+        this.timeB = timeB;
     }
 
 
