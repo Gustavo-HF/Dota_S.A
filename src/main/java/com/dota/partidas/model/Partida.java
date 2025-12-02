@@ -1,9 +1,10 @@
 package com.dota.partidas.model;
 
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 
-import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -14,6 +15,7 @@ import jakarta.persistence.OneToMany;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
 @Entity
 public class Partida {
@@ -26,21 +28,23 @@ public class Partida {
     @Min(value=0, message="O valor mínimo da diferença de patrimônio das duas equipes não pode ser menor que zero")
     private double diferencaPatrimonioEquipes;
 
-    @NotBlank(message="O campo data não pode estar vazio")
-    private String data;
+    @NotNull(message="O campo data não pode estar vazio")
+    private LocalDate data;
 
     @Min(value=2, message="O valor mínimo presente no placar de uma partida deve ser de 2 pontos")
     private int pontuacao;
 
-    @NotBlank(message="O campo de picks não pode estar vazio")
-    private String picks;
+    @ElementCollection
+    @Size(min = 10, max = 10, message = "Picks devem conter exatamente 10 heróis")    
+    private List<String> picks;
 
     @NotBlank(message="O campo de bans não pode estar vazio")
-    private String bans;
+    private List<String> bans;
 
-    @Column(unique=true)
-    @NotBlank(message="O campo de mvp não pode estar vazio")
-    private String mvp;
+    @NotNull(message="O campo mvp não pode estar vazio")
+    @ManyToOne
+    @JoinColumn(name = "mvp_id")
+    private Jogador mvp;
     
     @NotNull(message="O tempo de duração da partida não pode estar nulo")
     private LocalTime duracaoPartida;
@@ -52,10 +56,12 @@ public class Partida {
     @JoinColumn(name="campeonato_id")
     private Campeonato campeonato;
 
+    @NotNull(message="A partida deve ter o time A definido")
     @ManyToOne
     @JoinColumn(name = "timeA_id")
     private Time timeA;
 
+    @NotNull(message="A partida deve ter o time B definido")
     @ManyToOne
     @JoinColumn(name = "timeB_id")
     private Time timeB;
@@ -64,7 +70,7 @@ public class Partida {
 
     }
 
-    public Partida(String bans, String data, double diferencaPatrimonioEquipes, LocalTime duracaoPartida, Long id, List<JogadorPartida> jogadores, String mvp, String patrimonioLiquidoIndividual, String picks, int pontuacao, Campeonato campeonato, Time timeA, Time timeB) {
+    public Partida(List<String> bans, LocalDate data, double diferencaPatrimonioEquipes, LocalTime duracaoPartida, Long id, List<JogadorPartida> jogadores, Jogador mvp, String patrimonioLiquidoIndividual, List<String> picks, int pontuacao, Campeonato campeonato, Time timeA, Time timeB) {
         this.bans = bans;
         this.data = data;
         this.timeA = timeA;
@@ -95,11 +101,11 @@ public class Partida {
         this.diferencaPatrimonioEquipes = diferencaPatrimonioEquipes;
     }
 
-    public String getData() {
+    public LocalDate getData() {
         return data;
     }
 
-    public void setData(String data) {
+    public void setData(LocalDate data) {
         this.data = data;
     }
 
@@ -111,27 +117,27 @@ public class Partida {
         this.pontuacao = pontuacao;
     }
 
-    public String getPicks() {
+    public List<String> getPicks() {
         return picks;
     }
 
-    public void setPicks(String picks) {
+    public void setPicks(List<String> picks) {
         this.picks = picks;
     }
 
-    public String getBans() {
+    public List<String> getBans() {
         return bans;
     }
 
-    public void setBans(String bans) {
+    public void setBans(List<String> bans) {
         this.bans = bans;
     }
 
-    public String getMvp() {
+    public Jogador getMvp() {
         return mvp;
     }
 
-    public void setMvp(String mvp) {
+    public void setMvp(Jogador mvp) {
         this.mvp = mvp;
     }
 

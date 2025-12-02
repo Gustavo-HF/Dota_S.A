@@ -14,6 +14,7 @@ import jakarta.persistence.OneToMany;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 @Entity
@@ -31,7 +32,7 @@ public class Jogador {
     @NotBlank(message="O campo de nickname não pode estar vazio")
     private String nickname;
 
-    @NotBlank(message="O campo posição não pode estar vazio")
+    @NotNull(message="O campo posição não pode estar vazio")
     @Min(value=1, message="As posições devem ir do 1 ao 5")
     @Max(value=5, message="O número da posição não pode ser maior que 5")
     private int posicao;

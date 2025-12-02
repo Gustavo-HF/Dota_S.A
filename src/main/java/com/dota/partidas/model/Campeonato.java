@@ -9,6 +9,8 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 
 @Entity
 public class Campeonato {
@@ -21,19 +23,21 @@ public class Campeonato {
     private String nome;
 
     @NotBlank(message="O campo de modo do campeonato não pode estar vazio e deve ser informado no formato md3 ou md5")
+    @Pattern(regexp="md3|md5", message="O modo deve ser md3 ou md5")
     private String modo;
 
     @NotBlank(message="O patch em que o campeonato é jogado deve ser informado")
+    @Pattern(regexp="\\d\\.\\d{2}[a-z]", message="O patch deve estar no formato X.XXa, X.XXb, etc.")
     private String patchCampeonato;
 
-    @NotBlank(message="O campo da data de inicio do campeonato não pode estar vazia")
+    @NotNull(message="O campo da data de inicio do campeonato não pode estar vazia")
     private LocalDate comecoCamp;
 
-    @NotBlank(message="O campo de data do fim do campeonato não pode estar vazio")
+    @NotNull(message="O campo de data do fim do campeonato não pode estar vazio")
     private LocalDate fimCamp;
 
-    @OneToMany(mappedBy="partida")
-    List<Partida>partidas;
+    @OneToMany(mappedBy="campeonato")
+    private List<Partida>partidas;
 
     public Campeonato(){
 

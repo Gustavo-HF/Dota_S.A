@@ -8,6 +8,8 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 @Entity
@@ -25,24 +27,27 @@ public class Time {
     + "origem cadastrada, por isso este campo não pode ficar vazio")
     private String regiao;
 
+    @NotNull(message="Este campo não pode estar vazio")
     @Column(unique=true)
-    private int classificacaoMundial;
+    private Integer classificacaoMundial;
 
-    @NotNull(message="O número de jogadores não pode ser nulo")
-    private int numeroJogadores;
+    @Min(value = 5, message = "O time deve ter no mínimo 5 jogadores")
+    @Max(value = 10, message = "O time deve ter no máximo 10 jogadores")
+    private Integer numeroJogadores;
 
     private boolean isUltimoCampeaoDoTi;
 
+    @NotNull(message="Este campo não pode estar vazio")
     @Column(unique=true)
-    private int classificacaoCampeonato;
+    private Integer classificacaoCampeonato;
 
-    @OneToMany(mappedBy="jogador")
+    @OneToMany(mappedBy="time")
     private List<Jogador> jogadores;
     public Time(){
 
     }
 
-    public Time(int classificacaoCampeonato, int classificacaoMundial, Long id, boolean isUltimoCampeaoDoTi, String nome, int numeroJogadores, String regiao, List<Jogador> jogadores) {
+    public Time(Integer classificacaoCampeonato, Integer classificacaoMundial, Long id, boolean isUltimoCampeaoDoTi, String nome, int numeroJogadores, String regiao, List<Jogador> jogadores) {
         this.jogadores = jogadores;
         this.classificacaoCampeonato = classificacaoCampeonato;
         this.classificacaoMundial = classificacaoMundial;
@@ -77,11 +82,11 @@ public class Time {
         this.regiao = regiao;
     }
 
-    public int getClassificacaoMundial() {
+    public Integer getClassificacaoMundial() {
         return classificacaoMundial;
     }
 
-    public void setClassificacaoMundial(int classificacaoMundial) {
+    public void setClassificacaoMundial(Integer classificacaoMundial) {
         this.classificacaoMundial = classificacaoMundial;
     }
 
@@ -101,11 +106,11 @@ public class Time {
         this.isUltimoCampeaoDoTi = isUltimoCampeaoDoTi;
     }
 
-    public int getClassificacaoCampeonato() {
+    public Integer getClassificacaoCampeonato() {
         return classificacaoCampeonato;
     }
 
-    public void setClassificacaoCampeonato(int classificacaoCampeonato) {
+    public void setClassificacaoCampeonato(Integer classificacaoCampeonato) {
         this.classificacaoCampeonato = classificacaoCampeonato;
     }
 
