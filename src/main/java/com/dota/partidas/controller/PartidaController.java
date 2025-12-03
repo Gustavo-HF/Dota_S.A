@@ -3,6 +3,8 @@ package com.dota.partidas.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -23,23 +25,27 @@ public class PartidaController {
     private PartidaService partidaService;
 
     @GetMapping
-    public List<Partida> listar() {
-        return partidaService.listarTodas();
+    public ResponseEntity<List<Partida>> listar() {
+        return ResponseEntity.ok(partidaService.listarTodas());
     }
 
     @GetMapping("/{id}")
-    public Partida buscarPorId(@PathVariable Long id) {
-        return partidaService.buscarPorId(id);
+    public ResponseEntity<Partida> buscarPorId(@PathVariable Long id) {
+        Partida partida = partidaService.buscarPorId(id);
+        if (partida == null) return ResponseEntity.notFound().build();
+        return ResponseEntity.ok(partida);
     }
 
     @PostMapping
-    public Partida salvar(@RequestBody Partida partida) {
-        return partidaService.salvar(partida);
+    public ResponseEntity<Partida> salvar(@RequestBody Partida partida) {
+        Partida salvo = partidaService.salvar(partida);
+        return ResponseEntity.status(HttpStatus.CREATED).body(salvo);
     }
 
     @PutMapping("/{id}")
-    public Partida atualizar(@PathVariable Long id, @RequestBody Partida partida) {
+    public ResponseEntity<Partida> atualizar(@PathVariable Long id, @RequestBody Partida partida) {
         Partida existente = partidaService.buscarPorId(id);
+        if (existente == null) return ResponseEntity.notFound().build();
         existente.setDuracaoPartida(partida.getDuracaoPartida());
         existente.setPicks(partida.getPicks());
         existente.setBans(partida.getBans());
@@ -47,11 +53,21 @@ public class PartidaController {
         existente.setTimeA(partida.getTimeA());
         existente.setTimeB(partida.getTimeB());
         existente.setCampeonato(partida.getCampeonato());
-        return partidaService.salvar(existente);
+        return ResponseEntity.ok(partidaService.salvar(existente));
     }
 
     @DeleteMapping("/{id}")
-    public void excluir(@PathVariable Long id) {
+    public ResponseEntity<Void> excluir(@PathVariable Long id) {
+        Partida existente = partidaService.buscarPorId(id);
+        if (existente == null) return ResponseEntity.notFound().build();
         partidaService.excluirPorId(id);
+        return ResponseEntity.noContent().build();
     }
+
+    @DeleteMapping("/all")
+    public ResponseEntity<Void> excluirTudo(){
+        partidaService.excluirTodas();
+        return ResponseEntity.noContent().build();
+    }
+
 }

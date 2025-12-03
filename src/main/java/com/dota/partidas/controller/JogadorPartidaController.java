@@ -3,6 +3,8 @@ package com.dota.partidas.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -24,37 +26,51 @@ public class JogadorPartidaController {
     private JogadorPartidaService jogadorPartidaService;
 
     @GetMapping
-    public List<JogadorPartida> listar() {
-        return jogadorPartidaService.listarTodos();
+    public ResponseEntity<List<JogadorPartida>> listar() {
+        return ResponseEntity.ok(jogadorPartidaService.listarTodos());
     }
 
     @GetMapping("/{idPartida}/{idJogador}")
-    public JogadorPartida buscarPorId(@PathVariable Long idPartida,
-                                      @PathVariable Long idJogador) {
+    public ResponseEntity<JogadorPartida> buscarPorId(@PathVariable Long idPartida,
+                                                      @PathVariable Long idJogador) {
         JogadorPartidaId id = new JogadorPartidaId(idPartida, idJogador);
-        return jogadorPartidaService.buscarPorId(id);
+        JogadorPartida jp = jogadorPartidaService.buscarPorId(id);
+        if (jp == null) return ResponseEntity.notFound().build();
+        return ResponseEntity.ok(jp);
     }
 
     @PostMapping
-    public JogadorPartida salvar(@RequestBody JogadorPartida jogadorPartida) {
-        return jogadorPartidaService.salvar(jogadorPartida);
+    public ResponseEntity<JogadorPartida> salvar(@RequestBody JogadorPartida jogadorPartida) {
+        JogadorPartida salvo = jogadorPartidaService.salvar(jogadorPartida);
+        return ResponseEntity.status(HttpStatus.CREATED).body(salvo);
     }
 
     @PutMapping("/{idPartida}/{idJogador}")
-    public JogadorPartida atualizar(@PathVariable Long idPartida,
-                                    @PathVariable Long idJogador,
-                                    @RequestBody JogadorPartida jogadorPartida) {
+    public ResponseEntity<JogadorPartida> atualizar(@PathVariable Long idPartida,
+                                                    @PathVariable Long idJogador,
+                                                    @RequestBody JogadorPartida jogadorPartida) {
         JogadorPartidaId id = new JogadorPartidaId(idPartida, idJogador);
         JogadorPartida existente = jogadorPartidaService.buscarPorId(id);
+        if (existente == null) return ResponseEntity.notFound().build();
         existente.setKda(jogadorPartida.getKda());
-        return jogadorPartidaService.salvar(existente);
+        return ResponseEntity.ok(jogadorPartidaService.salvar(existente));
     }
 
     @DeleteMapping("/{idPartida}/{idJogador}")
-    public void excluir(@PathVariable Long idPartida,
-                        @PathVariable Long idJogador) {
+    public ResponseEntity<Void> excluir(@PathVariable Long idPartida,
+                                        @PathVariable Long idJogador) {
         JogadorPartidaId id = new JogadorPartidaId(idPartida, idJogador);
+        JogadorPartida existente = jogadorPartidaService.buscarPorId(id);
+        if (existente == null) return ResponseEntity.notFound().build();
         jogadorPartidaService.excluirPorId(id);
+        return ResponseEntity.noContent().build();
+    }
+    @DeleteMapping("/all")
+    public ResponseEntity<Void> excluirTudo(){
+        jogadorPartidaService.excluirTodos();
+        return ResponseEntity.noContent().build();
     }
 }
+
+
 
