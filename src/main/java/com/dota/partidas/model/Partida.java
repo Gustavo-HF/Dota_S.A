@@ -32,7 +32,7 @@ public class Partida {
     private LocalDate data;
 
     @Min(value=2, message="O valor mínimo presente no placar de uma partida deve ser de 2 pontos")
-    private int pontuacao;
+    private String pontuacao;
 
     @ElementCollection
     @Size(min = 10, max = 10, message = "Picks devem conter exatamente 10 heróis")    
@@ -70,7 +70,7 @@ public class Partida {
 
     }
 
-    public Partida(List<String> bans, LocalDate data, double diferencaPatrimonioEquipes, LocalTime duracaoPartida, Long id, List<JogadorPartida> jogadores, Jogador mvp, String patrimonioLiquidoIndividual, List<String> picks, int pontuacao, Campeonato campeonato, Time timeA, Time timeB) {
+    public Partida(List<String> bans, LocalDate data, double diferencaPatrimonioEquipes, LocalTime duracaoPartida, Long id, List<JogadorPartida> jogadores, Jogador mvp, String patrimonioLiquidoIndividual, List<String> picks, String pontuacao, Campeonato campeonato, Time timeA, Time timeB) {
         this.bans = bans;
         this.data = data;
         this.timeA = timeA;
@@ -109,11 +109,11 @@ public class Partida {
         this.data = data;
     }
 
-    public int getPontuacao() {
+    public String getPontuacao() {
         return pontuacao;
     }
 
-    public void setPontuacao(int pontuacao) {
+    public void setPontuacao(String pontuacao) {
         this.pontuacao = pontuacao;
     }
 
@@ -180,6 +180,8 @@ public class Partida {
     public void setTimeB(Time timeB) {
         this.timeB = timeB;
     }
+
+    
 
 
 
