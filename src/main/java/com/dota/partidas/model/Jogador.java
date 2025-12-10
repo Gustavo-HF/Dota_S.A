@@ -35,7 +35,7 @@ public class Jogador {
     @NotNull(message="O campo posição não pode estar vazio")
     @Min(value=1, message="As posições devem ir do 1 ao 5")
     @Max(value=5, message="O número da posição não pode ser maior que 5")
-    private int posicao;
+    private Integer posicao;
 
     @NotBlank(message="Este campo não pode estar vazio")
     private String nacionalidade;
@@ -48,7 +48,7 @@ public class Jogador {
     private List<String> heroisMaisJogados;
     
     @Min(value=6000, message="O valor do mmr para um profissional não pode ser menor do que 6000")
-    private int mmr;
+    private Integer mmr;
     
 
     public Jogador(){
@@ -63,7 +63,7 @@ public class Jogador {
     private List<JogadorPartida> partidas;
     
 
-    public Jogador(String funcao, List<String> heroisMaisJogados, Long id, int mmr, String nacionalidade, String nickname, String nome, int posicao, Time time, List<JogadorPartida> partidas) {
+    public Jogador(String funcao, List<String> heroisMaisJogados, Long id, Integer mmr, String nacionalidade, String nickname, String nome, Integer posicao, Time time, List<JogadorPartida> partidas) {
         this.funcao = funcao;
         this.partidas = partidas;
         this.heroisMaisJogados = heroisMaisJogados;
@@ -100,11 +100,11 @@ public class Jogador {
         this.nickname = nickname;
     }
 
-    public int getPosicao() {
+    public Integer getPosicao() {
         return posicao;
     }
 
-    public void setPosicao(int posicao) {
+    public void setPosicao(Integer posicao) {
         this.posicao = posicao;
     }
 
@@ -132,11 +132,11 @@ public class Jogador {
         this.heroisMaisJogados = heroisMaisJogados;
     }
 
-    public int getMmr() {
+    public Integer getMmr() {
         return mmr;
     }
 
-    public void setMmr(int mmr) {
+    public void setMmr(Integer mmr) {
         this.mmr = mmr;
     }
 

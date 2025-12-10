@@ -1,5 +1,6 @@
 package com.dota.partidas.controller;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +25,7 @@ public class TimeControllerTest {
     private TimeService timeService;
     
     @Test
+    @DisplayName("Should delete a created team")
     void testExcluir() throws Exception {
         Long idTime = 1L;
 

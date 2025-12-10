@@ -28,7 +28,7 @@ public class Partida {
     private Long id;
 
     @Min(value=0, message="O valor mínimo da diferença de patrimônio das duas equipes não pode ser menor que zero")
-    private double diferencaPatrimonioEquipes;
+    private Double diferencaPatrimonioEquipes;
 
     @NotNull(message="O campo data não pode estar vazio")
     private LocalDate data;
@@ -73,7 +73,7 @@ public class Partida {
 
     }
 
-    public Partida(List<String> bans, LocalDate data, double diferencaPatrimonioEquipes, LocalTime duracaoPartida, Long id, List<JogadorPartida> jogadores, Jogador mvp, String patrimonioLiquidoIndividual, List<String> picks, String pontuacao, Campeonato campeonato, Time timeA, Time timeB) {
+    public Partida(List<String> bans, LocalDate data, Double diferencaPatrimonioEquipes, LocalTime duracaoPartida, Long id, List<JogadorPartida> jogadores, Jogador mvp,  List<String> picks, String pontuacao, Campeonato campeonato, Time timeA, Time timeB) {
         this.bans = bans;
         this.data = data;
         this.timeA = timeA;
@@ -96,11 +96,11 @@ public class Partida {
         this.id = id;
     }
 
-    public double getDiferencaPatrimonioEquipes() {
+    public Double getDiferencaPatrimonioEquipes() {
         return diferencaPatrimonioEquipes;
     }
 
-    public void setDiferencaPatrimonioEquipes(double diferencaPatrimonioEquipes) {
+    public void setDiferencaPatrimonioEquipes(Double diferencaPatrimonioEquipes) {
         this.diferencaPatrimonioEquipes = diferencaPatrimonioEquipes;
     }
 

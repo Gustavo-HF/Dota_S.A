@@ -32,13 +32,13 @@ public class JogadorPartida {
     private String kda;
 
     @Min(value=0, message="O valor do patrimônio líquido não pode ser menor que zero")
-    private int patrimonioLiquidoIndividual;
+    private Integer patrimonioLiquidoIndividual;
 
     public JogadorPartida(){
 
     }
 
-    public JogadorPartida(Jogador jogador, String kda, int patrimonioLiquidoIndividual, Partida partida) {
+    public JogadorPartida(Jogador jogador, String kda, Integer patrimonioLiquidoIndividual, Partida partida) {
         this.jogador = jogador;
         this.patrimonioLiquidoIndividual = patrimonioLiquidoIndividual;
         this.kda = kda;
@@ -77,11 +77,11 @@ public class JogadorPartida {
         this.kda = kda;
     }
 
-    public int getPatrimonioLiquidoIndividual() {
+    public Integer getPatrimonioLiquidoIndividual() {
         return patrimonioLiquidoIndividual;
     }
 
-    public void setPatrimonioLiquidoIndividual(int patrimonioLiquidoIndividual) {
+    public void setPatrimonioLiquidoIndividual(Integer patrimonioLiquidoIndividual) {
         this.patrimonioLiquidoIndividual = patrimonioLiquidoIndividual;
     }
 

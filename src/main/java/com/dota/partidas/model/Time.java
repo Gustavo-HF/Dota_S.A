@@ -12,6 +12,7 @@ import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+
 @Entity
 public class Time {
 
@@ -35,7 +36,7 @@ public class Time {
     @Max(value = 10, message = "O time deve ter no máximo 10 jogadores")
     private Integer numeroJogadores = 0;
 
-    private boolean isUltimoCampeaoDoTi;
+    private Boolean isUltimoCampeaoDoTi;
 
     @NotNull(message="Este campo não pode estar vazio")
     @Column(unique=true)
@@ -47,7 +48,7 @@ public class Time {
 
     }
 
-    public Time(Integer classificacaoCampeonato, Integer classificacaoMundial, Long id, boolean isUltimoCampeaoDoTi, String nome, int numeroJogadores, String regiao, List<Jogador> jogadores) {
+    public Time(Integer classificacaoCampeonato, Integer classificacaoMundial, Long id, Boolean isUltimoCampeaoDoTi, String nome, Integer numeroJogadores, String regiao, List<Jogador> jogadores) {
         this.jogadores = jogadores;
         this.classificacaoCampeonato = classificacaoCampeonato;
         this.classificacaoMundial = classificacaoMundial;
@@ -90,19 +91,19 @@ public class Time {
         this.classificacaoMundial = classificacaoMundial;
     }
 
-    public int getNumeroJogadores() {
+    public Integer getNumeroJogadores() {
         return numeroJogadores;
     }
 
-    public void setNumeroJogadores(int numeroJogadores) {
+    public void setNumeroJogadores(Integer numeroJogadores) {
         this.numeroJogadores = numeroJogadores;
     }
 
-    public boolean isIsUltimoCampeaoDoTi() {
+    public Boolean isIsUltimoCampeaoDoTi() {
         return isUltimoCampeaoDoTi;
     }
 
-    public void setIsUltimoCampeaoDoTi(boolean isUltimoCampeaoDoTi) {
+    public void setIsUltimoCampeaoDoTi(Boolean isUltimoCampeaoDoTi) {
         this.isUltimoCampeaoDoTi = isUltimoCampeaoDoTi;
     }
 

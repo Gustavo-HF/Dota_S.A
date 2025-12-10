@@ -35,5 +35,20 @@ public class JogadorPartidaId implements Serializable{
     public void setPartidaId(Long partidaId) {
         this.partidaId = partidaId;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof JogadorPartidaId)) return false;
+        JogadorPartidaId that = (JogadorPartidaId) o;
+        return java.util.Objects.equals(jogadorId, that.jogadorId) &&
+            java.util.Objects.equals(partidaId, that.partidaId);
+    }
+
+    @Override
+    public int hashCode() {
+        return java.util.Objects.hash(jogadorId, partidaId);
+    }   
+
     
 }

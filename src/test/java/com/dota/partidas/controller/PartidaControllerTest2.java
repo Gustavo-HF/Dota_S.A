@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,15 +34,17 @@ public class PartidaControllerTest2 {
     private PartidaService partidaService;
 
     @Test
+    @DisplayName("Should create a match")
     void testSalvar() throws Exception {
-        // JSON enviado pelo cliente
+
+        // --- JSON enviado ---
         String partidaJson = """
             {
-                "diferencaPatrimonioEquipes": 15000,
+                "diferencaPatrimonioEquipes": 15.000,
                 "data": "2025-02-01",
                 "pontuacao": "2x1",
                 "picks": ["hero1","hero2","hero3","hero4","hero5","hero6","hero7","hero8","hero9","hero10"],
-                "bans": ["ban1","ban2","ban3","ban4","ban5"],
+                "bans": ["ban1","ban2","ban3","ban4","ban5","ban6","ban7","ban8","ban9","ban10"],
                 "mvp": { "id": 10 },
                 "duracaoPartida": "01:15:20",
                 "campeonato": { "id": 3 },
@@ -50,28 +53,32 @@ public class PartidaControllerTest2 {
             }
             """;
 
-        // Mock do retorno salvo do service
+        // --- ENTIDADE simulada como salva ---
         Partida partidaSalva = new Partida();
         partidaSalva.setId(100L);
-        partidaSalva.setDiferencaPatrimonioEquipes(15000);
+        partidaSalva.setDiferencaPatrimonioEquipes(15.000);
         partidaSalva.setData(LocalDate.of(2025, 2, 1));
         partidaSalva.setPontuacao("2x1");
         partidaSalva.setPicks(List.of("hero1","hero2","hero3","hero4","hero5","hero6","hero7","hero8","hero9","hero10"));
-        partidaSalva.setBans(List.of("ban1","ban2","ban3","ban4","ban5"));
+        partidaSalva.setBans(List.of("ban1","ban2","ban3","ban4","ban5","ban6","ban7","ban8","ban9","ban10"));
         partidaSalva.setDuracaoPartida(LocalTime.of(1, 15, 20));
 
+        // MVP
         Jogador mvp = new Jogador();
         mvp.setId(10L);
         partidaSalva.setMvp(mvp);
 
+        // Campeonato
         Campeonato camp = new Campeonato();
         camp.setId(3L);
         partidaSalva.setCampeonato(camp);
 
+        // Time A
         Time timeA = new Time();
         timeA.setId(1L);
         partidaSalva.setTimeA(timeA);
 
+        // Time B
         Time timeB = new Time();
         timeB.setId(2L);
         partidaSalva.setTimeB(timeB);
@@ -79,6 +86,7 @@ public class PartidaControllerTest2 {
         Mockito.when(partidaService.salvar(Mockito.any(Partida.class)))
                 .thenReturn(partidaSalva);
 
+        // --- Teste da requisição ---
         mockMvc.perform(post("/partidas")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(partidaJson))
@@ -86,12 +94,11 @@ public class PartidaControllerTest2 {
                 .andExpect(jsonPath("$.id").value(100))
                 .andExpect(jsonPath("$.pontuacao").value("2x1"))
                 .andExpect(jsonPath("$.picks.length()").value(10))
-                .andExpect(jsonPath("$.bans.length()").value(5))
+                .andExpect(jsonPath("$.bans.length()").value(10))
                 .andExpect(jsonPath("$.mvp.id").value(10))
                 .andExpect(jsonPath("$.timeA.id").value(1))
                 .andExpect(jsonPath("$.timeB.id").value(2));
 
-        Mockito.verify(partidaService, Mockito.times(1))
-                .salvar(Mockito.any(Partida.class));
+        Mockito.verify(partidaService, Mockito.times(1)).salvar(Mockito.any(Partida.class));
     }
 }
