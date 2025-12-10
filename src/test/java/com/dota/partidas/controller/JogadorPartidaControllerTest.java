@@ -39,10 +39,13 @@ public class JogadorPartidaControllerTest {
         private JogadorPartida jogadorPartida;
 
         @MockitoBean
+        //Mockagem do JogadorPartidaService
         private JogadorPartidaService jogadorPartidaService;
 
         @BeforeEach
         void setup() {
+
+            // Criação do objeto Jogador
             jogador = new Jogador();
             jogador.setId(1L);
             jogador.setNome("Felipe Astini");
@@ -53,10 +56,12 @@ public class JogadorPartidaControllerTest {
             jogador.setHeroisMaisJogados(List.of("Slardar, Timbersaw e UnderLord"));
             jogador.setMmr(12000);
 
+            // Criação do objeto JogadorPartida
             jogadorPartida = new JogadorPartida();
             jogadorPartida.setJogador(jogador);
             jogadorPartida.setKda("8/0/2");
 
+            // Criação do objeto partida
             Partida partida = new Partida();
             partida.setId(1L);
             partida.setData(LocalDate.now());
@@ -74,28 +79,36 @@ public class JogadorPartidaControllerTest {
             // O KDA que deve ser atualizado
             String novoKDA = "10/05/18";
 
+            // Cria uma instância existente de JogadorPartida e associa jogador e partida
             JogadorPartida existente = jogadorPartida;
             existente.setJogador(jogador);
             existente.setPartida(partida);
 
+            // Configura o mock para retornar o objeto existente quando buscarPorId for chamado
             when(jogadorPartidaService.buscarPorId(any(JogadorPartidaId.class)))
                     .thenReturn(existente);
 
+            // Cria uma instância atualizada de JogadorPartida com o novo KDA
             JogadorPartida atualizado = jogadorPartida;
             atualizado.setKda(novoKDA);
 
+            // Configura o mock para retornar o objeto atualizado quando salvar for chamado
             when(jogadorPartidaService.salvar(any(JogadorPartida.class)))
                     .thenReturn(atualizado);
 
+            // Executa a requisição PUT simulada para atualizar o KDA do jogador na partida
             mockMvc.perform(put("/jogador-partida/{idPartida}/{idJogador}", 1L, 1L)
                     .contentType(MediaType.APPLICATION_JSON)
                     .content("""
-            {
-                "kda": "10/05/18"
-            }
-            """))
+                        {
+                            "kda": "10/05/18"
+                        }
+                        """))
+                    // Verifica se o status da resposta é 200 OK
                     .andExpect(status().isOk())
+                    // Verifica se o KDA retornado corresponde ao novo valor
                     .andExpect(jsonPath("$.kda").value(novoKDA))
+                    // Verifica se os dados do jogador retornados estão corretos
                     .andExpect(jsonPath("$.jogador.id").value(1))
                     .andExpect(jsonPath("$.jogador.nome").value("Felipe Astini"))
                     .andExpect(jsonPath("$.jogador.nickname").value("Ast1ni"));

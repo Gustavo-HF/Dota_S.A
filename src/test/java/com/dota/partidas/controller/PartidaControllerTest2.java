@@ -31,13 +31,14 @@ public class PartidaControllerTest2 {
     private MockMvc mockMvc;
 
     @MockitoBean
+    //Mockagem do PartidaService
     private PartidaService partidaService;
 
     @Test
     @DisplayName("Should create a match")
     void testSalvar() throws Exception {
 
-        // --- JSON enviado ---
+        //Json que envia a requisição para o sistema
         String partidaJson = """
             {
                 "diferencaPatrimonioEquipes": 15.000,
@@ -53,7 +54,7 @@ public class PartidaControllerTest2 {
             }
             """;
 
-        // --- ENTIDADE simulada como salva ---
+        //Criação do objeto partida
         Partida partidaSalva = new Partida();
         partidaSalva.setId(100L);
         partidaSalva.setDiferencaPatrimonioEquipes(15.000);
@@ -83,6 +84,7 @@ public class PartidaControllerTest2 {
         timeB.setId(2L);
         partidaSalva.setTimeB(timeB);
 
+        // Configuração do mock: quando salvar for chamado, retorna a partidaSalva
         Mockito.when(partidaService.salvar(Mockito.any(Partida.class)))
                 .thenReturn(partidaSalva);
 
@@ -99,6 +101,7 @@ public class PartidaControllerTest2 {
                 .andExpect(jsonPath("$.timeA.id").value(1))
                 .andExpect(jsonPath("$.timeB.id").value(2));
 
+        // Verifica se o método salvar foi chamado exatamente uma vez
         Mockito.verify(partidaService, Mockito.times(1)).salvar(Mockito.any(Partida.class));
     }
 }
