@@ -33,7 +33,7 @@ public class Time {
 
     @Min(value = 5, message = "O time deve ter no mínimo 5 jogadores")
     @Max(value = 10, message = "O time deve ter no máximo 10 jogadores")
-    private Integer numeroJogadores;
+    private Integer numeroJogadores = 0;
 
     private boolean isUltimoCampeaoDoTi;
 

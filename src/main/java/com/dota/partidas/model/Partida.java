@@ -4,6 +4,8 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -31,14 +33,14 @@ public class Partida {
     @NotNull(message="O campo data não pode estar vazio")
     private LocalDate data;
 
-    @Min(value=2, message="O valor mínimo presente no placar de uma partida deve ser de 2 pontos")
+    @NotBlank(message="O campo pontuação não pode estar vazio")
     private String pontuacao;
 
     @ElementCollection
     @Size(min = 10, max = 10, message = "Picks devem conter exatamente 10 heróis")    
     private List<String> picks;
 
-    @NotBlank(message="O campo de bans não pode estar vazio")
+    @Size(min = 10, max = 10, message = "Bans devem conter exatamente 10 heróis")
     private List<String> bans;
 
     @NotNull(message="O campo mvp não pode estar vazio")
@@ -47,6 +49,7 @@ public class Partida {
     private Jogador mvp;
     
     @NotNull(message="O tempo de duração da partida não pode estar nulo")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm:ss")
     private LocalTime duracaoPartida;
 
     @OneToMany(mappedBy = "partida")
