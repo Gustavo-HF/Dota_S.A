@@ -5,6 +5,10 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.dota.partidas.exception.JogadorPartidaException.JogadorDevePertencerAPartidaException;
+import com.dota.partidas.exception.JogadorPartidaException.JogadorFormatoKDAExcpetion;
+import com.dota.partidas.exception.JogadorPartidaException.JogadorJaNaPartidaException;
+import com.dota.partidas.exception.JogadorPartidaException.JogadorPartidaRegistroExcpetion;
 import com.dota.partidas.model.JogadorPartida;
 import com.dota.partidas.model.compositkeys.JogadorPartidaId;
 import com.dota.partidas.repository.JogadorPartidaRepository;
@@ -22,16 +26,16 @@ public class JogadorPartidaService {
                 .isPresent();
 
         if (jogadorJaNaPartida) {
-            throw new IllegalArgumentException("O jogador já está vinculado a esta partida");
+            throw new JogadorJaNaPartidaException("O jogador já está vinculado a esta partida");
         }
 
         // 2. Validar se o jogador pertence a um dos times da partida
         if (!(jogadorPartida.getPartida().getTimeA().getJogadores().contains(jogadorPartida.getJogador())
                 || jogadorPartida.getPartida().getTimeB().getJogadores().contains(jogadorPartida.getJogador()))) {
-            throw new IllegalArgumentException("O jogador deve pertencer a um dos times que disputou a partida");
+            throw new JogadorDevePertencerAPartidaException("O jogador deve pertencer a um dos times que disputou a partida");
         }
         if (!jogadorPartida.getKda().matches("\\d+/\\d+/\\d+")) {
-        throw new IllegalArgumentException("O KDA deve estar no formato Abates/Mortes/Assistências, ex: 10/2/15");
+        throw new JogadorFormatoKDAExcpetion("O KDA deve estar no formato Abates/Mortes/Assistências, ex: 10/2/15");
         }
 
 
@@ -44,7 +48,7 @@ public class JogadorPartidaService {
 
     public JogadorPartida buscarPorId(JogadorPartidaId id) {
         return jogadorPartidaRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Registro de JogadorPartida não encontrado"));
+                .orElseThrow(() -> new JogadorPartidaRegistroExcpetion("Registro de JogadorPartida não encontrado"));
     }
 
     public void excluirPorId(JogadorPartidaId id) {
