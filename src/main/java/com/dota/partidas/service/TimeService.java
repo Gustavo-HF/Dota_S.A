@@ -5,6 +5,12 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.dota.partidas.exception.TimeException.CampeaoDoTIException;
+import com.dota.partidas.exception.TimeException.ClassificacaoCampeonatoExistenteException;
+import com.dota.partidas.exception.TimeException.ClassificacaoMundialExistenteException;
+import com.dota.partidas.exception.TimeException.TimeDevePossuir5a10JogadoresException;
+import com.dota.partidas.exception.TimeException.TimeDevePossuirRegiaoException;
+import com.dota.partidas.exception.TimeException.TimeNãoEncontradoException;
 import com.dota.partidas.model.Time;
 import com.dota.partidas.repository.TimeRepository;
 
@@ -18,29 +24,29 @@ public class TimeService {
     public Time salvar(Time time) {
         // 1. Validar número de jogadores
         if (time.getNumeroJogadores() < 5 || time.getNumeroJogadores() > 10) {
-            throw new IllegalArgumentException("O time deve ter entre 5 e 10 jogadores");
+            throw new TimeDevePossuir5a10JogadoresException("O time deve ter entre 5 e 10 jogadores");
         }
 
         // 2. Validar região
         if (time.getRegiao() == null || time.getRegiao().isBlank()) {
-            throw new IllegalArgumentException("O time deve ter uma região registrada");
+            throw new TimeDevePossuirRegiaoException("O time deve ter uma região registrada");
         }
 
         // 3. Validar classificação mundial única
         if (timeRepository.findByClassificacaoMundial(time.getClassificacaoMundial()).isPresent()) {
-            throw new IllegalArgumentException("Já existe um time com essa classificação mundial");
+            throw new ClassificacaoMundialExistenteException("Já existe um time com essa classificação mundial");
         }
 
         // 4. Validar classificação de campeonato única
         if (timeRepository.findByClassificacaoCampeonato(time.getClassificacaoCampeonato()).isPresent()) {
-            throw new IllegalArgumentException("Já existe um time com essa classificação de campeonato");
+            throw new ClassificacaoCampeonatoExistenteException("Já existe um time com essa classificação de campeonato");
         }
 
         // 5. Validar último campeão do TI (apenas um pode ser true)
         if (time.isIsUltimoCampeaoDoTi()) {
             List<Time> campeoes = timeRepository.findByIsUltimoCampeaoDoTiTrue();
             if (!campeoes.isEmpty()) {
-                throw new IllegalArgumentException("Já existe um time marcado como último campeão do TI");
+                throw new CampeaoDoTIException("Já existe um time marcado como último campeão do TI");
             }
         }
 
@@ -55,7 +61,7 @@ public class TimeService {
     // Buscar por ID
     public Time buscarPorId(Long id) {
         return timeRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Time não encontrado"));
+                .orElseThrow(() -> new TimeNãoEncontradoException("Time não encontrado"));
     }
 
     // Excluir por ID
