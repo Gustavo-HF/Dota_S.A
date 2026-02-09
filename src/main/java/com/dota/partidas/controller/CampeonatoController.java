@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.dota.partidas.model.Campeonato;
 import com.dota.partidas.service.CampeonatoService;
 
+import jakarta.validation.Valid;
+
 
 @RestController
 @RequestMapping("/campeonatos")
@@ -31,20 +33,20 @@ public class CampeonatoController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Campeonato> buscarPorId(@PathVariable Long id) {
+    public ResponseEntity<Campeonato> buscarPorId(@Valid @PathVariable Long id) {
         Campeonato campeonato = campeonatoService.buscarPorId(id);
         if (campeonato == null) return ResponseEntity.notFound().build();
         return ResponseEntity.ok(campeonato);
     }
 
     @PostMapping
-    public ResponseEntity<Campeonato> salvar(@RequestBody Campeonato campeonato) {
+    public ResponseEntity<Campeonato> salvar(@Valid @RequestBody Campeonato campeonato) {
         Campeonato salvo = campeonatoService.salvarCampeonato(campeonato);
         return ResponseEntity.status(HttpStatus.CREATED).body(salvo);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Campeonato> atualizar(@PathVariable Long id, @RequestBody Campeonato campeonato) {
+    public ResponseEntity<Campeonato> atualizar(@Valid @PathVariable Long id, @RequestBody Campeonato campeonato) {
         Campeonato existente = campeonatoService.buscarPorId(id);
         if (existente == null) return ResponseEntity.notFound().build();
         existente.setNome(campeonato.getNome());
@@ -56,7 +58,7 @@ public class CampeonatoController {
     }
 
     @DeleteMapping("/all")
-    public ResponseEntity<Void> excluir(@PathVariable Long id) {
+    public ResponseEntity<Void> excluir(@Valid @PathVariable Long id) {
         Campeonato existente = campeonatoService.buscarPorId(id);
         if (existente == null) return ResponseEntity.notFound().build();
         campeonatoService.deletarCampeonato();

@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.dota.partidas.model.Partida;
 import com.dota.partidas.service.PartidaService;
 
+import jakarta.validation.Valid;
+
 @RestController
 @RequestMapping("/partidas")
 public class PartidaController {
@@ -30,20 +32,20 @@ public class PartidaController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Partida> buscarPorId(@PathVariable Long id) {
+    public ResponseEntity<Partida> buscarPorId(@Valid @PathVariable Long id) {
         Partida partida = partidaService.buscarPorId(id);
         if (partida == null) return ResponseEntity.notFound().build();
         return ResponseEntity.ok(partida);
     }
 
     @PostMapping
-    public ResponseEntity<Partida> salvar(@RequestBody Partida partida) {
+    public ResponseEntity<Partida> salvar(@Valid @RequestBody Partida partida) {
         Partida salvo = partidaService.salvar(partida);
         return ResponseEntity.status(HttpStatus.CREATED).body(salvo);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Partida> atualizar(@PathVariable Long id, @RequestBody Partida partida) {
+    public ResponseEntity<Partida> atualizar(@Valid @PathVariable Long id, @RequestBody Partida partida) {
         Partida existente = partidaService.buscarPorId(id);
         if (existente == null) return ResponseEntity.notFound().build();
         existente.setDuracaoPartida(partida.getDuracaoPartida());
@@ -57,7 +59,7 @@ public class PartidaController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> excluir(@PathVariable Long id) {
+    public ResponseEntity<Void> excluir(@Valid @PathVariable Long id) {
         Partida existente = partidaService.buscarPorId(id);
         if (existente == null) return ResponseEntity.notFound().build();
         partidaService.excluirPorId(id);

@@ -18,6 +18,8 @@ import com.dota.partidas.model.JogadorPartida;
 import com.dota.partidas.model.compositkeys.JogadorPartidaId;
 import com.dota.partidas.service.JogadorPartidaService;
 
+import jakarta.validation.Valid;
+
 @RestController
 @RequestMapping("/jogador-partida")
 public class JogadorPartidaController {
@@ -31,7 +33,7 @@ public class JogadorPartidaController {
     }
 
     @GetMapping("/{idPartida}/{idJogador}")
-    public ResponseEntity<JogadorPartida> buscarPorId(@PathVariable Long idPartida,
+    public ResponseEntity<JogadorPartida> buscarPorId(@Valid @PathVariable Long idPartida,
                                                       @PathVariable Long idJogador) {
         JogadorPartidaId id = new JogadorPartidaId(idPartida, idJogador);
         JogadorPartida jp = jogadorPartidaService.buscarPorId(id);
@@ -40,13 +42,13 @@ public class JogadorPartidaController {
     }
 
     @PostMapping
-    public ResponseEntity<JogadorPartida> salvar(@RequestBody JogadorPartida jogadorPartida) {
+    public ResponseEntity<JogadorPartida> salvar(@Valid @RequestBody JogadorPartida jogadorPartida) {
         JogadorPartida salvo = jogadorPartidaService.salvar(jogadorPartida);
         return ResponseEntity.status(HttpStatus.CREATED).body(salvo);
     }
 
     @PutMapping("/{idPartida}/{idJogador}")
-    public ResponseEntity<JogadorPartida> atualizar(@PathVariable Long idPartida,
+    public ResponseEntity<JogadorPartida> atualizar(@Valid @PathVariable Long idPartida,
                                                     @PathVariable Long idJogador,
                                                     @RequestBody JogadorPartida jogadorPartida) {
         JogadorPartidaId id = new JogadorPartidaId(idPartida, idJogador);
@@ -57,7 +59,7 @@ public class JogadorPartidaController {
     }
 
     @DeleteMapping("/{idPartida}/{idJogador}")
-    public ResponseEntity<Void> excluir(@PathVariable Long idPartida,
+    public ResponseEntity<Void> excluir(@Valid @PathVariable Long idPartida,
                                         @PathVariable Long idJogador) {
         JogadorPartidaId id = new JogadorPartidaId(idPartida, idJogador);
         JogadorPartida existente = jogadorPartidaService.buscarPorId(id);

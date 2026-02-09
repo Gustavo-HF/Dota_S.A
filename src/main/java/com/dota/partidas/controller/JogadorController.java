@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.dota.partidas.model.Jogador;
 import com.dota.partidas.service.JogadorService;
 
+import jakarta.validation.Valid;
+
 @RestController
 @RequestMapping("/jogadores")
 public class JogadorController {
@@ -30,20 +32,20 @@ public class JogadorController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Jogador> buscarPorId(@PathVariable Long id) {
+    public ResponseEntity<Jogador> buscarPorId(@Valid @PathVariable Long id) {
         Jogador jogador = jogadorService.buscarPorId(id);
         if (jogador == null) return ResponseEntity.notFound().build();
         return ResponseEntity.ok(jogador);
     }
 
     @PostMapping
-    public ResponseEntity<Jogador> salvar(@RequestBody Jogador jogador) {
+    public ResponseEntity<Jogador> salvar(@Valid @RequestBody Jogador jogador) {
         Jogador salvo = jogadorService.salvar(jogador);
         return ResponseEntity.status(HttpStatus.CREATED).body(salvo);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Jogador> atualizar(@PathVariable Long id, @RequestBody Jogador jogador) {
+    public ResponseEntity<Jogador> atualizar(@Valid @PathVariable Long id, @RequestBody Jogador jogador) {
         Jogador existente = jogadorService.buscarPorId(id);
         if (existente == null) return ResponseEntity.notFound().build();
         existente.setNickname(jogador.getNickname());
@@ -53,7 +55,7 @@ public class JogadorController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> excluir(@PathVariable Long id) {
+    public ResponseEntity<Void> excluir(@Valid @PathVariable Long id) {
         Jogador existente = jogadorService.buscarPorId(id);
         if (existente == null) return ResponseEntity.notFound().build();
         jogadorService.excluirPorId(id);

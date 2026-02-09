@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.dota.partidas.model.Time;
 import com.dota.partidas.service.TimeService;
 
+import jakarta.validation.Valid;
+
 @RestController
 @RequestMapping("/times")
 public class TimeController {
@@ -32,7 +34,7 @@ public class TimeController {
 
     // Buscar por ID
     @GetMapping("/{id}")
-    public ResponseEntity<Time> buscarPorId(@PathVariable Long id) {
+    public ResponseEntity<Time> buscarPorId(@Valid @PathVariable Long id) {
         Time time = timeService.buscarPorId(id);
         if (time == null) return ResponseEntity.notFound().build();
         return ResponseEntity.ok(time);
@@ -40,14 +42,14 @@ public class TimeController {
 
     // Salvar
     @PostMapping
-    public ResponseEntity<Time> salvar(@RequestBody Time time) {
+    public ResponseEntity<Time> salvar(@Valid @RequestBody Time time) {
         Time salvo = timeService.salvar(time);
         return ResponseEntity.status(HttpStatus.CREATED).body(salvo);
     }
 
     // Atualizar
     @PutMapping("/{id}")
-    public ResponseEntity<Time> atualizar(@PathVariable Long id, @RequestBody Time time) {
+    public ResponseEntity<Time> atualizar(@Valid @PathVariable Long id, @RequestBody Time time) {
         Time existente = timeService.buscarPorId(id);
         if (existente == null) return ResponseEntity.notFound().build();
 
@@ -64,7 +66,7 @@ public class TimeController {
 
     // Excluir por ID
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> excluir(@PathVariable Long id) {
+    public ResponseEntity<Void> excluir(@Valid @PathVariable Long id) {
         Time existente = timeService.buscarPorId(id);
         if (existente == null) return ResponseEntity.notFound().build();
         timeService.excluirPorId(id);
