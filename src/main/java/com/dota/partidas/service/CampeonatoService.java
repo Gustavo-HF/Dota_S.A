@@ -27,7 +27,7 @@ public class CampeonatoService {
         if(campeonato.getComecoCamp().isAfter(campeonato.getFimCamp())){
             throw new DataInvalidaException("A data final não pode ser anterior a data inicial");
         }  
-        // 2. Validar patch (regex já está no model, mas podemos reforçar)
+        // 2. Validar patch (regex já está no model, mas é bom reforçar)
         if (campeonato.getPatchCampeonato() == null || 
             !campeonato.getPatchCampeonato().matches("\\d\\.\\d{2}[a-z]")) {
             throw new PatchInvalidoException("O patch deve estar no formato oficial (ex: 7.33d)");
