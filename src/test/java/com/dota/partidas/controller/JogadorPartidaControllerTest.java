@@ -19,6 +19,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.dota.partidas.dto.JogadorPartidaDTO;
 import com.dota.partidas.model.Jogador;
 import com.dota.partidas.model.JogadorPartida;
 import com.dota.partidas.model.Partida;
@@ -93,7 +94,7 @@ public class JogadorPartidaControllerTest {
             atualizado.setKda(novoKDA);
 
             // Configura o mock para retornar o objeto atualizado quando salvar for chamado
-            when(jogadorPartidaService.salvar(any(JogadorPartida.class)))
+            when(jogadorPartidaService.salvar(any(JogadorPartidaDTO.class)))
                     .thenReturn(atualizado);
 
             // Executa a requisição PUT simulada para atualizar o KDA do jogador na partida

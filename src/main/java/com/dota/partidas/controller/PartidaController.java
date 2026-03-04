@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.dota.partidas.dto.PartidaDTO;
 import com.dota.partidas.model.Partida;
 import com.dota.partidas.service.PartidaService;
 
@@ -39,13 +40,13 @@ public class PartidaController {
     }
 
     @PostMapping
-    public ResponseEntity<Partida> salvar(@Valid @RequestBody Partida partida) {
+    public ResponseEntity<Partida> salvar(@Valid @RequestBody PartidaDTO partida) {
         Partida salvo = partidaService.salvar(partida);
         return ResponseEntity.status(HttpStatus.CREATED).body(salvo);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Partida> atualizar(@Valid @PathVariable Long id, @RequestBody Partida partida) {
+    public ResponseEntity<Partida> atualizar(@Valid @PathVariable Long id, @RequestBody PartidaDTO partida) {
         Partida existente = partidaService.buscarPorId(id);
         if (existente == null) return ResponseEntity.notFound().build();
         existente.setDuracaoPartida(partida.getDuracaoPartida());
@@ -55,7 +56,7 @@ public class PartidaController {
         existente.setTimeA(partida.getTimeA());
         existente.setTimeB(partida.getTimeB());
         existente.setCampeonato(partida.getCampeonato());
-        return ResponseEntity.ok(partidaService.salvar(existente));
+        return ResponseEntity.ok(partidaService.salvar(partida));
     }
 
     @DeleteMapping("/{id}")

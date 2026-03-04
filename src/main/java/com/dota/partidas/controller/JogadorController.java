@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.dota.partidas.dto.JogadorDTO;
 import com.dota.partidas.model.Jogador;
 import com.dota.partidas.service.JogadorService;
 
@@ -39,19 +40,19 @@ public class JogadorController {
     }
 
     @PostMapping
-    public ResponseEntity<Jogador> salvar(@Valid @RequestBody Jogador jogador) {
+    public ResponseEntity<Jogador> salvar(@Valid @RequestBody JogadorDTO jogador) {
         Jogador salvo = jogadorService.salvar(jogador);
         return ResponseEntity.status(HttpStatus.CREATED).body(salvo);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Jogador> atualizar(@Valid @PathVariable Long id, @RequestBody Jogador jogador) {
+    public ResponseEntity<Jogador> atualizar(@Valid @PathVariable Long id, @RequestBody JogadorDTO jogador) {
         Jogador existente = jogadorService.buscarPorId(id);
         if (existente == null) return ResponseEntity.notFound().build();
         existente.setNickname(jogador.getNickname());
         existente.setMmr(jogador.getMmr());
         existente.setHeroisMaisJogados(jogador.getHeroisMaisJogados());
-        return ResponseEntity.ok(jogadorService.salvar(existente));
+        return ResponseEntity.ok(jogadorService.salvar(jogador));
     }
 
     @DeleteMapping("/{id}")

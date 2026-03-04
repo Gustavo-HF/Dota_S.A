@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.dota.partidas.dto.CampeonatoDTO;
 import com.dota.partidas.model.Campeonato;
 import com.dota.partidas.service.CampeonatoService;
 
@@ -40,13 +41,13 @@ public class CampeonatoController {
     }
 
     @PostMapping
-    public ResponseEntity<Campeonato> salvar(@Valid @RequestBody Campeonato campeonato) {
-        Campeonato salvo = campeonatoService.salvarCampeonato(campeonato);
+    public ResponseEntity<Campeonato> salvar(@Valid @RequestBody CampeonatoDTO campeonatoDTO) {
+        Campeonato salvo = campeonatoService.salvarCampeonato(campeonatoDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(salvo);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Campeonato> atualizar(@Valid @PathVariable Long id, @RequestBody Campeonato campeonato) {
+    public ResponseEntity<Campeonato> atualizar(@Valid @PathVariable Long id, @RequestBody CampeonatoDTO campeonato) {
         Campeonato existente = campeonatoService.buscarPorId(id);
         if (existente == null) return ResponseEntity.notFound().build();
         existente.setNome(campeonato.getNome());
@@ -54,7 +55,9 @@ public class CampeonatoController {
         existente.setFimCamp(campeonato.getFimCamp());
         existente.setPatchCampeonato(campeonato.getPatchCampeonato());
         existente.setPartidas(campeonato.getPartidas());
-        return ResponseEntity.ok(campeonatoService.salvarCampeonato(existente));
+        return ResponseEntity.ok(campeonatoService.salvarCampeonato(campeonato));
+
+       
     }
 
     @DeleteMapping("/all")

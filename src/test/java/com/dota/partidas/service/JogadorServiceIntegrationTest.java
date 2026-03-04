@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import com.dota.partidas.dto.JogadorDTO;
 import com.dota.partidas.exception.JogadorException.JogadorNotFoundException;
 import com.dota.partidas.model.Jogador;
 import com.dota.partidas.repository.JogadorRepository;
@@ -156,24 +157,24 @@ public class JogadorServiceIntegrationTest {
     void deveCriarESalvarOJogadorComSucesso() {
 
         //Arrange
-        Jogador jogador = new Jogador();
-        jogador.setNickname("An4log");
-        jogador.setMmr(13000);
-        jogador.setFuncao("Mid");
-        jogador.setNacionalidade("Brasileiro");
-        jogador.setNome("Paulo");
-        jogador.setPosicao(2);
+        JogadorDTO jogadorDTO = new JogadorDTO();
+        jogadorDTO.setNickname("An4log");
+        jogadorDTO.setMmr(13000);
+        jogadorDTO.setFuncao("Mid");
+        jogadorDTO.setNacionalidade("Brasileiro");
+        jogadorDTO.setNome("Paulo");
+        jogadorDTO.setPosicao(2);
 
         //Act
-        jogadorService.salvar(jogador);
+        jogadorService.salvar(jogadorDTO);
 
         //Assert
-        assertEquals("An4log", jogador.getNickname());
-        assertEquals(13000, jogador.getMmr());
-        assertEquals("Mid", jogador.getFuncao());
-        assertEquals("Brasileiro", jogador.getNacionalidade());
-        assertEquals("Paulo", jogador.getNome());
-        assertEquals(2, jogador.getPosicao());
+        assertEquals("An4log", jogadorDTO.getNickname());
+        assertEquals(13000, jogadorDTO.getMmr());
+        assertEquals("Mid", jogadorDTO.getFuncao());
+        assertEquals("Brasileiro", jogadorDTO.getNacionalidade());
+        assertEquals("Paulo", jogadorDTO.getNome());
+        assertEquals(2, jogadorDTO.getPosicao());
 
 
     }

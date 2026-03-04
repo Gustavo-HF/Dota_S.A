@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.dota.partidas.dto.TimeDTO;
 import com.dota.partidas.model.Time;
 import com.dota.partidas.service.TimeService;
 
@@ -42,14 +43,14 @@ public class TimeController {
 
     // Salvar
     @PostMapping
-    public ResponseEntity<Time> salvar(@Valid @RequestBody Time time) {
+    public ResponseEntity<Time> salvar(@Valid @RequestBody TimeDTO time) {
         Time salvo = timeService.salvar(time);
         return ResponseEntity.status(HttpStatus.CREATED).body(salvo);
     }
 
     // Atualizar
     @PutMapping("/{id}")
-    public ResponseEntity<Time> atualizar(@Valid @PathVariable Long id, @RequestBody Time time) {
+    public ResponseEntity<Time> atualizar(@Valid @PathVariable Long id, @RequestBody TimeDTO time) {
         Time existente = timeService.buscarPorId(id);
         if (existente == null) return ResponseEntity.notFound().build();
 
@@ -60,7 +61,7 @@ public class TimeController {
         existente.setClassificacaoCampeonato(time.getClassificacaoCampeonato());
         existente.setIsUltimoCampeaoDoTi(time.isIsUltimoCampeaoDoTi());
 
-        Time atualizado = timeService.salvar(existente);
+        Time atualizado = timeService.salvar(time);
         return ResponseEntity.ok(atualizado);
     }
 

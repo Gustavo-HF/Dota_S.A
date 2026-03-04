@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.dota.partidas.dto.JogadorPartidaDTO;
 import com.dota.partidas.model.JogadorPartida;
 import com.dota.partidas.model.compositkeys.JogadorPartidaId;
 import com.dota.partidas.service.JogadorPartidaService;
@@ -42,7 +43,7 @@ public class JogadorPartidaController {
     }
 
     @PostMapping
-    public ResponseEntity<JogadorPartida> salvar(@Valid @RequestBody JogadorPartida jogadorPartida) {
+    public ResponseEntity<JogadorPartida> salvar(@Valid @RequestBody JogadorPartidaDTO jogadorPartida) {
         JogadorPartida salvo = jogadorPartidaService.salvar(jogadorPartida);
         return ResponseEntity.status(HttpStatus.CREATED).body(salvo);
     }
@@ -50,12 +51,12 @@ public class JogadorPartidaController {
     @PutMapping("/{idPartida}/{idJogador}")
     public ResponseEntity<JogadorPartida> atualizar(@Valid @PathVariable Long idPartida,
                                                     @PathVariable Long idJogador,
-                                                    @RequestBody JogadorPartida jogadorPartida) {
+                                                    @RequestBody JogadorPartidaDTO jogadorPartida) {
         JogadorPartidaId id = new JogadorPartidaId(idPartida, idJogador);
         JogadorPartida existente = jogadorPartidaService.buscarPorId(id);
         if (existente == null) return ResponseEntity.notFound().build();
         existente.setKda(jogadorPartida.getKda());
-        return ResponseEntity.ok(jogadorPartidaService.salvar(existente));
+        return ResponseEntity.ok(jogadorPartidaService.salvar(jogadorPartida));
     }
 
     @DeleteMapping("/{idPartida}/{idJogador}")

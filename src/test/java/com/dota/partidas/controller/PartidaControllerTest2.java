@@ -17,6 +17,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.dota.partidas.dto.PartidaDTO;
 import com.dota.partidas.model.Campeonato;
 import com.dota.partidas.model.Jogador;
 import com.dota.partidas.model.Partida;
@@ -85,7 +86,7 @@ public class PartidaControllerTest2 {
         partidaSalva.setTimeB(timeB);
 
         // Configuração do mock: quando salvar for chamado, retorna a partidaSalva
-        Mockito.when(partidaService.salvar(Mockito.any(Partida.class)))
+        Mockito.when(partidaService.salvar(Mockito.any(PartidaDTO.class)))
                 .thenReturn(partidaSalva);
 
         // --- Teste da requisição ---
@@ -102,6 +103,6 @@ public class PartidaControllerTest2 {
                 .andExpect(jsonPath("$.timeB.id").value(2));
 
         // Verifica se o método salvar foi chamado exatamente uma vez
-        Mockito.verify(partidaService, Mockito.times(1)).salvar(Mockito.any(Partida.class));
+        Mockito.verify(partidaService, Mockito.times(1)).salvar(Mockito.any(PartidaDTO.class));
     }
 }
