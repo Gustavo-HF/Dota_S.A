@@ -59,7 +59,7 @@ public class TimeController {
         existente.setRegiao(time.getRegiao());
         existente.setClassificacaoMundial(time.getClassificacaoMundial());
         existente.setClassificacaoCampeonato(time.getClassificacaoCampeonato());
-        existente.setIsUltimoCampeaoDoTi(time.isIsUltimoCampeaoDoTi());
+        existente.setIsUltimoCampeaoDoTi(time.getIsUltimoCampeaoDoTi());
 
         Time atualizado = timeService.salvar(time);
         return ResponseEntity.ok(atualizado);

@@ -43,7 +43,7 @@ public class TimeService {
         }
 
         // 5. Validar último campeão do TI (apenas um pode ser true)
-        if (timeDTO.isUltimoCampeaoDoTi()) {
+        if (timeDTO.getIsUltimoCampeaoDoTi()) {
             List<Time> campeoes = timeRepository.findByIsUltimoCampeaoDoTiTrue();
             if (!campeoes.isEmpty()) {
                 throw new CampeaoDoTIException("Já existe um time marcado como último campeão do TI");
