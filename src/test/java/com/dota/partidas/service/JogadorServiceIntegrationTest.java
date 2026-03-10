@@ -44,23 +44,21 @@ public class JogadorServiceIntegrationTest {
         assertEquals("miracle", encontrado.getNickname());
         assertEquals(8000, encontrado.getMmr());
 
-
     }
 
     @Test
     @DisplayName("Deve retornar exeção quando procurar jogador com id inexistente")
-    void deveBuscarJogadorPorIdInexistenteERetornarErro(){
+    void deveBuscarJogadorPorIdInexistenteERetornarErro() {
         //Act + Assert
-        assertThrows(JogadorNotFoundException.class, () -> { 
+        assertThrows(JogadorNotFoundException.class, () -> {
             jogadorService.buscarPorId(1L);
         });
     }
 
-
     @Test
     @DisplayName("Deve excluir um jogador pelo id")
     void deveExcluirJogadorPorIdComSucesso() {
-        
+
         //Arrange
         Jogador jogador = new Jogador();
         jogador.setNickname("An4log");
@@ -83,13 +81,23 @@ public class JogadorServiceIntegrationTest {
         //Assert
         assertFalse(jogadorRepository.existsById(id));
 
+    }
+
+    @Test
+    @DisplayName("Deve lançar exceção ao buscar jogador inexistente")
+    void deveBuscarJogadorInexistenteERetornarErro() {
+
+        // Act + Assert
+        assertThrows(JogadorNotFoundException.class, () -> {
+            jogadorService.buscarPorId(1L);
+        });
 
     }
 
     @Test
     @DisplayName("Deve exlcuir todos os jogadores com sucesso")
     void deveExcluirTodosOsJogadoresComSucesso() {
-        
+
         //Arrange
         Jogador jogador = new Jogador();
         jogador.setNickname("An4log");
@@ -116,6 +124,16 @@ public class JogadorServiceIntegrationTest {
         //Assert
         assertTrue(jogadorRepository.findAll().isEmpty());
 
+    }
+
+    @Test
+    @DisplayName("Deve lançar exceção ao excluir jogador inexistente")
+    void deveExcluirJogadorInexistente() {
+
+        // Act + Assert
+        assertThrows(JogadorNotFoundException.class, () -> {
+            jogadorService.excluirPorId(1L);
+        });
 
     }
 
@@ -153,6 +171,20 @@ public class JogadorServiceIntegrationTest {
     }
 
     @Test
+    @DisplayName("Deve retornar lista vazia quando não houver jogadores cadastrados")
+    void deveListarTodosOsJogadoresSemSucesso() {
+
+        // Arrange
+        jogadorRepository.deleteAll();
+
+        // Act
+        var jogadores = jogadorService.listarTodos();
+
+        // Assert
+        assertTrue(jogadores.isEmpty());
+    }
+
+    @Test
     @DisplayName("Deve criar e salvar um jogador novo com sucesso")
     void deveCriarESalvarOJogadorComSucesso() {
 
@@ -176,6 +208,63 @@ public class JogadorServiceIntegrationTest {
         assertEquals("Paulo", jogadorDTO.getNome());
         assertEquals(2, jogadorDTO.getPosicao());
 
+    }
+
+    @Test
+    @DisplayName("Não deve salvar jogador com MMR abaixo do mínimo")
+    void naoDeveSalvarJogadorComMMRInvalido() {
+
+        // Arrange
+        JogadorDTO jogadorDTO = new JogadorDTO();
+        jogadorDTO.setNickname("player");
+        jogadorDTO.setMmr(3000);
+
+        // Act + Assert
+        assertThrows(RuntimeException.class, () -> {
+            jogadorService.salvar(jogadorDTO);
+        });
+
+    }
+
+    @Test
+    @DisplayName("Não deve salvar jogador com nickname duplicado")
+    void naoDeveSalvarJogadorComNicknameDuplicado() {
+
+        // Arrange
+        Jogador jogador = new Jogador();
+        jogador.setNickname("Miracle");
+        jogador.setMmr(8000);
+
+        jogadorRepository.save(jogador);
+
+        JogadorDTO jogadorDTO = new JogadorDTO();
+        jogadorDTO.setNickname("Miracle");
+        jogadorDTO.setMmr(9000);
+
+        // Act + Assert
+        assertThrows(RuntimeException.class, () -> {
+            jogadorService.salvar(jogadorDTO);
+        });
+
+    }
+
+    @Test
+    @DisplayName("Não deve salvar jogador com mais de 3 heróis mais jogados")
+    void naoDeveSalvarJogadorComMaisDeTresHerois() {
+
+        // Arrange
+        JogadorDTO jogadorDTO = new JogadorDTO();
+        jogadorDTO.setNickname("Player");
+        jogadorDTO.setMmr(8000);
+
+        jogadorDTO.setHeroisMaisJogados(
+                java.util.List.of("Invoker", "Pudge", "Axe", "Juggernaut")
+        );
+
+        // Act + Assert
+        assertThrows(RuntimeException.class, () -> {
+            jogadorService.salvar(jogadorDTO);
+        });
 
     }
 }
