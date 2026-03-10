@@ -4,17 +4,36 @@ import java.util.List;
 
 import com.dota.partidas.model.Jogador;
 
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+
 
 
 public class TimeDTO {
     
     private Long id;
+
+    @NotBlank(message="O campo nome não pode estar vazio")
     private String nome;
+
+    @NotBlank(message="Cada time deve ter uma região de " 
+    + "origem cadastrada, por isso este campo não pode ficar vazio")
     private String regiao;
+
+    @NotNull(message="Este campo não pode estar vazio")
     private Integer classificacaoMundial;
+
+    @Min(value = 5, message = "O time deve ter no mínimo 5 jogadores")
+    @Max(value = 10, message = "O time deve ter no máximo 10 jogadores")
     private Integer numeroJogadores = 0;
+
     private Boolean isUltimoCampeaoDoTi;
+    
+    @NotNull(message="Este campo não pode estar vazio")
     private Integer classificacaoCampeonato;
+
     private List<Jogador> jogadores;
 
     public TimeDTO() {

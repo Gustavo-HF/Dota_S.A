@@ -3,11 +3,18 @@ package com.dota.partidas.dto;
 import com.dota.partidas.model.Jogador;
 import com.dota.partidas.model.Partida;
 
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+
 public class JogadorPartidaDTO {
 
     private Jogador jogador;
     private Partida partida;
+
+    @NotBlank(message="O valor do KDA deve estar informado")
     private String kda;
+
+    @Min(value=0, message="O valor do patrimônio líquido não pode ser menor que zero")
     private Integer patrimonioLiquidoIndividual;
 
     public JogadorPartidaDTO() {

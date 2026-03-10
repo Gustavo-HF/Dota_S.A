@@ -7,6 +7,7 @@ import com.dota.partidas.model.Partida;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 
 public class CampeonatoDTO {
 
@@ -16,8 +17,12 @@ public class CampeonatoDTO {
     @NotBlank(message="O campo de nome do campeonato deve estar preenchido")
     private String nome;
 
-
+    @NotBlank(message="O modo do campeonato não pode estar vazio e deve ser informado no formato md3 ou md5")
+    @Pattern(regexp="md3|md5", message="O modo deve ser md3 ou md5")
     private String modo;
+
+    @NotBlank(message="O patch em que o campeonato é jogado deve ser informado")
+    @Pattern(regexp="\\d\\.\\d{2}[a-z]", message="O patch deve estar no formato X.XXa, X.XXb, etc.")
     private String patchCampeonato;
 
     @NotNull(message="Data de começo de campeonato deve estar preenchida")
@@ -25,8 +30,7 @@ public class CampeonatoDTO {
 
     @NotNull(message="Data de fim de campeonato deve estar preenchida")
     private LocalDate fimCamp;
-
-
+    
     private List<Partida>partidas;
 
     public CampeonatoDTO() {

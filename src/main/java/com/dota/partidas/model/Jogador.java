@@ -50,7 +50,6 @@ public class Jogador {
     @Min(value=6000, message="O valor do mmr para um profissional não pode ser menor do que 6000")
     private Integer mmr;
     
-
     public Jogador(){
 
     }

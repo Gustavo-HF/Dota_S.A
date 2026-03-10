@@ -8,22 +8,51 @@ import com.dota.partidas.model.Campeonato;
 import com.dota.partidas.model.Jogador;
 import com.dota.partidas.model.JogadorPartida;
 import com.dota.partidas.model.Time;
+import com.fasterxml.jackson.annotation.JsonFormat;
+
+import jakarta.persistence.ElementCollection;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
 
 
 public class PartidaDTO {
 
     private Long id;
+
+    @Min(value=0, message="O valor mínimo da diferença de patrimônio das duas equipes não pode ser menor que zero")
     private Double diferencaPatrimonioEquipes;
+
+    @NotNull(message="O campo data não pode estar vazio")
     private LocalDate data;
+
+    @NotBlank(message="O campo pontuação não pode estar vazio")
     private String pontuacao;
+
+    @ElementCollection
+    @Size(min = 10, max = 10, message = "Picks devem conter exatamente 10 heróis")  
     private List<String> picks;
+
+    @Size(min = 10, max = 10, message = "Bans devem conter exatamente 10 heróis")
     private List<String> bans;
+
+    @NotNull(message="O campo mvp não pode estar vazio")
     private Jogador mvp;
+
+    @NotNull(message="O tempo de duração da partida não pode estar nulo")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm:ss")
     private LocalTime duracaoPartida;
+
     private List<JogadorPartida> jogadores;
+
     private Campeonato campeonato;
+
+    @NotNull(message="A partida deve ter o time A definido")
     private Time timeA;
+
+    @NotNull(message="A partida deve ter o time B definido")
     private Time timeB;
 
     public PartidaDTO() {
