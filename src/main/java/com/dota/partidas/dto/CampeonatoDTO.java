@@ -5,14 +5,28 @@ import java.util.List;
 
 import com.dota.partidas.model.Partida;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+
 public class CampeonatoDTO {
 
+    
     private Long id;
+
+    @NotBlank(message="O campo de nome do campeonato deve estar preenchido")
     private String nome;
+
+
     private String modo;
     private String patchCampeonato;
+
+    @NotNull(message="Data de começo de campeonato deve estar preenchida")
     private LocalDate comecoCamp;
+
+    @NotNull(message="Data de fim de campeonato deve estar preenchida")
     private LocalDate fimCamp;
+
+
     private List<Partida>partidas;
 
     public CampeonatoDTO() {
