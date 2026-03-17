@@ -19,48 +19,47 @@ import jakarta.validation.constraints.Size;
 
 @Entity
 public class Jogador {
-    
+
     @Id
-    @GeneratedValue(strategy=GenerationType.AUTO)
-    
+    @GeneratedValue(strategy = GenerationType.AUTO)
+
     private Long id;
 
-    @NotBlank(message="O campo de nome não pode estar vazio")
+    @NotBlank(message = "O campo de nome não pode estar vazio")
     private String nome;
 
-    @Column(unique=true)
-    @NotBlank(message="O campo de nickname não pode estar vazio")
+    @Column(unique = true)
+    @NotBlank(message = "O campo de nickname não pode estar vazio")
     private String nickname;
 
-    @NotNull(message="O campo posição não pode estar vazio")
-    @Min(value=1, message="As posições devem ir do 1 ao 5")
-    @Max(value=5, message="O número da posição não pode ser maior que 5")
+    @NotNull(message = "O campo posição não pode estar vazio")
+    @Min(value = 1, message = "As posições devem ir do 1 ao 5")
+    @Max(value = 5, message = "O número da posição não pode ser maior que 5")
     private Integer posicao;
 
-    @NotBlank(message="Este campo não pode estar vazio")
+    @NotBlank(message = "Este campo não pode estar vazio")
     private String nacionalidade;
 
-    @NotBlank(message="Este campo não pode estar vazio")
+    @NotBlank(message = "Este campo não pode estar vazio")
     private String funcao;
-    
+
     @ElementCollection
-    @Size(max=3)
+    @Size(max = 3)
     private List<String> heroisMaisJogados;
-    
-    @Min(value=6000, message="O valor do mmr para um profissional não pode ser menor do que 6000")
+
+    @Min(value = 6000, message = "O valor do mmr para um profissional não pode ser menor do que 6000")
     private Integer mmr;
-    
-    public Jogador(){
+
+    public Jogador() {
 
     }
 
     @ManyToOne
-    @JoinColumn(name="time_id")
+    @JoinColumn(name = "time_id")
     private Time time;
 
     @OneToMany(mappedBy = "jogador")
     private List<JogadorPartida> partidas;
-    
 
     public Jogador(String funcao, List<String> heroisMaisJogados, Long id, Integer mmr, String nacionalidade, String nickname, String nome, Integer posicao, Time time, List<JogadorPartida> partidas) {
         this.funcao = funcao;
@@ -155,6 +154,4 @@ public class Jogador {
         this.partidas = partidas;
     }
 
-
 }
-

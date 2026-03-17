@@ -63,6 +63,10 @@ public class CampeonatoService {
     public void deletarCampeonato(){
         campeonatoRepository.deleteAll();
     }
+
+    public void deletarCampeonatoPorId(Long id){
+        campeonatoRepository.deleteById(id);
+    }
 } 
 
 

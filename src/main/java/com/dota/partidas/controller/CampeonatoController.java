@@ -60,12 +60,22 @@ public class CampeonatoController {
        
     }
 
-    @DeleteMapping("/all")
-    public ResponseEntity<Void> excluir(@Valid @PathVariable Long id) {
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> excluirPorId(@Valid @PathVariable Long id){
         Campeonato existente = campeonatoService.buscarPorId(id);
-        if (existente == null) return ResponseEntity.notFound().build();
+        if (existente == null) {
+            return ResponseEntity.notFound().build();
+        }
+        campeonatoService.deletarCampeonatoPorId(id);
+        return ResponseEntity.noContent().build();
+
+    }
+
+    @DeleteMapping("/all")
+    public ResponseEntity<Void> excluir() {
         campeonatoService.deletarCampeonato();
         return ResponseEntity.noContent().build();
+
     }
 
 }
