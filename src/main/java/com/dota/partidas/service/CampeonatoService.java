@@ -60,6 +60,19 @@ public class CampeonatoService {
         return campeonatoRepository.findById(id).orElseThrow(() -> new CampeonatoNotFoundException("Campeonato não encontrado"));
     }
 
+    public Campeonato atualizar(Long id, CampeonatoDTO dto) {
+    Campeonato existente = campeonatoRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("Campeonato não encontrado"));
+
+    existente.setNome(dto.getNome());
+    existente.setComecoCamp(dto.getComecoCamp());
+    existente.setFimCamp(dto.getFimCamp());
+    existente.setPatchCampeonato(dto.getPatchCampeonato());
+    existente.setPartidas(dto.getPartidas());
+
+    return campeonatoRepository.save(existente);
+}
+
     public void deletarCampeonato(){
         campeonatoRepository.deleteAll();
     }

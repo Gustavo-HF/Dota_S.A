@@ -14,9 +14,10 @@ import com.dota.partidas.exception.TimeException.TimeDevePossuirRegiaoException;
 import com.dota.partidas.exception.TimeException.TimeNãoEncontradoException;
 import com.dota.partidas.model.Time;
 import com.dota.partidas.repository.TimeRepository;
+
 @Service
 public class TimeService {
-    
+
     @Autowired
     private TimeRepository timeRepository;
 
@@ -72,6 +73,20 @@ public class TimeService {
     public Time buscarPorId(Long id) {
         return timeRepository.findById(id)
                 .orElseThrow(() -> new TimeNãoEncontradoException("Time não encontrado"));
+    }
+
+    public Time atualizar(Long id, TimeDTO dto) {
+        Time existente = timeRepository.findById(id)
+                .orElseThrow(() -> new TimeNãoEncontradoException("Time não encontrado"));
+
+        existente.setNome(dto.getNome());
+        existente.setNumeroJogadores(dto.getNumeroJogadores());
+        existente.setRegiao(dto.getRegiao());
+        existente.setClassificacaoMundial(dto.getClassificacaoMundial());
+        existente.setClassificacaoCampeonato(dto.getClassificacaoCampeonato());
+        existente.setIsUltimoCampeaoDoTi(dto.getIsUltimoCampeaoDoTi());
+
+        return timeRepository.save(existente);
     }
 
     // Excluir por ID

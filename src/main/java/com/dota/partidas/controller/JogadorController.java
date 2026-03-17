@@ -35,7 +35,9 @@ public class JogadorController {
     @GetMapping("/{id}")
     public ResponseEntity<Jogador> buscarPorId(@Valid @PathVariable Long id) {
         Jogador jogador = jogadorService.buscarPorId(id);
-        if (jogador == null) return ResponseEntity.notFound().build();
+        if (jogador == null) {
+            return ResponseEntity.notFound().build();
+        }
         return ResponseEntity.ok(jogador);
     }
 
@@ -46,29 +48,32 @@ public class JogadorController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Jogador> atualizar(@Valid @PathVariable Long id, @RequestBody JogadorDTO jogador) {
-        Jogador existente = jogadorService.buscarPorId(id);
-        if (existente == null) return ResponseEntity.notFound().build();
-        existente.setNickname(jogador.getNickname());
-        existente.setMmr(jogador.getMmr());
-        existente.setHeroisMaisJogados(jogador.getHeroisMaisJogados());
-        return ResponseEntity.ok(jogadorService.salvar(jogador));
+    public ResponseEntity<Jogador> atualizar(
+            @PathVariable Long id,
+            @RequestBody JogadorDTO jogador) {
+
+        try {
+            Jogador atualizado = jogadorService.atualizar(id, jogador);
+            return ResponseEntity.ok(atualizado);
+        } catch (RuntimeException e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> excluir(@Valid @PathVariable Long id) {
         Jogador existente = jogadorService.buscarPorId(id);
-        if (existente == null) return ResponseEntity.notFound().build();
+        if (existente == null) {
+            return ResponseEntity.notFound().build();
+        }
         jogadorService.excluirPorId(id);
         return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/all")
-    public ResponseEntity<Void> excluirTudo(){
+    public ResponseEntity<Void> excluirTudo() {
         jogadorService.excluirTodos();
         return ResponseEntity.noContent().build();
 
     }
 }
-
-

@@ -37,7 +37,9 @@ public class TimeController {
     @GetMapping("/{id}")
     public ResponseEntity<Time> buscarPorId(@Valid @PathVariable Long id) {
         Time time = timeService.buscarPorId(id);
-        if (time == null) return ResponseEntity.notFound().build();
+        if (time == null) {
+            return ResponseEntity.notFound().build();
+        }
         return ResponseEntity.ok(time);
     }
 
@@ -50,26 +52,25 @@ public class TimeController {
 
     // Atualizar
     @PutMapping("/{id}")
-    public ResponseEntity<Time> atualizar(@Valid @PathVariable Long id, @RequestBody TimeDTO time) {
-        Time existente = timeService.buscarPorId(id);
-        if (existente == null) return ResponseEntity.notFound().build();
+    public ResponseEntity<Time> atualizar(
+            @PathVariable Long id,
+            @RequestBody TimeDTO time) {
 
-        existente.setNome(time.getNome());
-        existente.setNumeroJogadores(time.getNumeroJogadores());
-        existente.setRegiao(time.getRegiao());
-        existente.setClassificacaoMundial(time.getClassificacaoMundial());
-        existente.setClassificacaoCampeonato(time.getClassificacaoCampeonato());
-        existente.setIsUltimoCampeaoDoTi(time.getIsUltimoCampeaoDoTi());
-
-        Time atualizado = timeService.salvar(time);
-        return ResponseEntity.ok(atualizado);
+        try {
+            Time atualizado = timeService.atualizar(id, time);
+            return ResponseEntity.ok(atualizado);
+        } catch (RuntimeException e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     // Excluir por ID
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> excluir(@Valid @PathVariable Long id) {
         Time existente = timeService.buscarPorId(id);
-        if (existente == null) return ResponseEntity.notFound().build();
+        if (existente == null) {
+            return ResponseEntity.notFound().build();
+        }
         timeService.excluirPorId(id);
         return ResponseEntity.noContent().build();
     }
@@ -81,4 +82,3 @@ public class TimeController {
         return ResponseEntity.noContent().build();
     }
 }
-

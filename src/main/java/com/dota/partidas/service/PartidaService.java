@@ -1,4 +1,5 @@
 package com.dota.partidas.service;
+
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +19,7 @@ import com.dota.partidas.repository.PartidaRepository;
 
 @Service
 public class PartidaService {
-    
+
     @Autowired
     private PartidaRepository partidaRepository;
 
@@ -37,8 +38,8 @@ public class PartidaService {
         }
 
         // 3. Validar MVP
-        if (partidaDTO.getMvp() == null || 
-            partidaDTO.getJogadores().stream().noneMatch(jp -> jp.getJogador().equals(partidaDTO.getMvp()))) {
+        if (partidaDTO.getMvp() == null
+                || partidaDTO.getJogadores().stream().noneMatch(jp -> jp.getJogador().equals(partidaDTO.getMvp()))) {
             throw new MvpPertencenteAPartidaException("O MVP deve ser um jogador que participou da partida");
         }
 
@@ -67,7 +68,7 @@ public class PartidaService {
         partida.setDuracaoPartida(partidaDTO.getDuracaoPartida());
         partida.setDiferencaPatrimonioEquipes(partidaDTO.getDiferencaPatrimonioEquipes());
         partida.setCampeonato(partidaDTO.getCampeonato());
-        
+
         return partidaRepository.save(partida);
     }
 
@@ -80,6 +81,21 @@ public class PartidaService {
                 .orElseThrow(() -> new PartidaNãoEncontradaException("Partida não encontrada"));
     }
 
+    public Partida atualizar(Long id, PartidaDTO dto) {
+        Partida existente = partidaRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Partida não encontrada"));
+
+        existente.setDuracaoPartida(dto.getDuracaoPartida());
+        existente.setPicks(dto.getPicks());
+        existente.setBans(dto.getBans());
+        existente.setMvp(dto.getMvp());
+        existente.setTimeA(dto.getTimeA());
+        existente.setTimeB(dto.getTimeB());
+        existente.setCampeonato(dto.getCampeonato());
+
+        return partidaRepository.save(existente);
+    }
+
     public void excluirPorId(Long id) {
         partidaRepository.deleteById(id);
     }
@@ -88,4 +104,3 @@ public class PartidaService {
         partidaRepository.deleteAll();
     }
 }
-

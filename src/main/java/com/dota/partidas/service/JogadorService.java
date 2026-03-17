@@ -15,15 +15,15 @@ import com.dota.partidas.repository.JogadorRepository;
 
 @Service
 public class JogadorService {
-    
+
     @Autowired
     private JogadorRepository jogadorRepository;
 
-     // Salvar com validações
+    // Salvar com validações
     public Jogador salvar(JogadorDTO jogadorDTO) {
         // 1. Validar MMR
         if (jogadorDTO.getMmr() < 6000) {
-            throw new  JogadorMMRMinimoException("O MMR mínimo para jogador profissional é 6000");
+            throw new JogadorMMRMinimoException("O MMR mínimo para jogador profissional é 6000");
         }
 
         // 2. Validar nickname único
@@ -45,7 +45,7 @@ public class JogadorService {
         jogador.setMmr(jogadorDTO.getMmr());
         jogador.setPosicao(jogadorDTO.getPosicao());
         jogador.setNickname(jogadorDTO.getNickname());
-        
+
         return jogadorRepository.save(jogador);
     }
 
@@ -60,9 +60,23 @@ public class JogadorService {
                 .orElseThrow(() -> new JogadorNotFoundException("Jogador não encontrado"));
     }
 
+    public Jogador atualizar(Long id, JogadorDTO dto) {
+        Jogador existente = jogadorRepository.findById(id)
+                .orElseThrow(() -> new JogadorNotFoundException("Jogador não encontrado"));
+
+        existente.setNickname(dto.getNickname());
+        existente.setMmr(dto.getMmr());
+        existente.setHeroisMaisJogados(dto.getHeroisMaisJogados());
+
+        return jogadorRepository.save(existente);
+    }
+
     // Excluir por ID
     public void excluirPorId(Long id) {
-        jogadorRepository.deleteById(id);
+        Jogador jogador = jogadorRepository.findById(id)
+                .orElseThrow(() -> new JogadorNotFoundException("Jogador não encontrado"));
+
+        jogadorRepository.delete(jogador);
     }
 
     // Excluir todos

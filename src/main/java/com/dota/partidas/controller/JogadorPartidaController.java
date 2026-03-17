@@ -35,10 +35,12 @@ public class JogadorPartidaController {
 
     @GetMapping("/{idPartida}/{idJogador}")
     public ResponseEntity<JogadorPartida> buscarPorId(@Valid @PathVariable Long idPartida,
-                                                      @PathVariable Long idJogador) {
+            @PathVariable Long idJogador) {
         JogadorPartidaId id = new JogadorPartidaId(idPartida, idJogador);
         JogadorPartida jp = jogadorPartidaService.buscarPorId(id);
-        if (jp == null) return ResponseEntity.notFound().build();
+        if (jp == null) {
+            return ResponseEntity.notFound().build();
+        }
         return ResponseEntity.ok(jp);
     }
 
@@ -49,31 +51,35 @@ public class JogadorPartidaController {
     }
 
     @PutMapping("/{idPartida}/{idJogador}")
-    public ResponseEntity<JogadorPartida> atualizar(@Valid @PathVariable Long idPartida,
-                                                    @PathVariable Long idJogador,
-                                                    @RequestBody JogadorPartidaDTO jogadorPartida) {
-        JogadorPartidaId id = new JogadorPartidaId(idPartida, idJogador);
-        JogadorPartida existente = jogadorPartidaService.buscarPorId(id);
-        if (existente == null) return ResponseEntity.notFound().build();
-        existente.setKda(jogadorPartida.getKda());
-        return ResponseEntity.ok(jogadorPartidaService.salvar(jogadorPartida));
+    public ResponseEntity<JogadorPartida> atualizar(
+            @PathVariable Long idPartida,
+            @PathVariable Long idJogador,
+            @RequestBody JogadorPartidaDTO jogadorPartida) {
+
+        try {
+            JogadorPartidaId id = new JogadorPartidaId(idPartida, idJogador);
+            JogadorPartida atualizado = jogadorPartidaService.atualizar(id, jogadorPartida);
+            return ResponseEntity.ok(atualizado);
+        } catch (RuntimeException e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @DeleteMapping("/{idPartida}/{idJogador}")
     public ResponseEntity<Void> excluir(@Valid @PathVariable Long idPartida,
-                                        @PathVariable Long idJogador) {
+            @PathVariable Long idJogador) {
         JogadorPartidaId id = new JogadorPartidaId(idPartida, idJogador);
         JogadorPartida existente = jogadorPartidaService.buscarPorId(id);
-        if (existente == null) return ResponseEntity.notFound().build();
+        if (existente == null) {
+            return ResponseEntity.notFound().build();
+        }
         jogadorPartidaService.excluirPorId(id);
         return ResponseEntity.noContent().build();
     }
+
     @DeleteMapping("/all")
-    public ResponseEntity<Void> excluirTudo(){
+    public ResponseEntity<Void> excluirTudo() {
         jogadorPartidaService.excluirTodos();
         return ResponseEntity.noContent().build();
     }
 }
-
-
-

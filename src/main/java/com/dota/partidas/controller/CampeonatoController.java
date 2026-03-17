@@ -20,7 +20,6 @@ import com.dota.partidas.service.CampeonatoService;
 
 import jakarta.validation.Valid;
 
-
 @RestController
 @RequestMapping("/campeonatos")
 public class CampeonatoController {
@@ -36,7 +35,9 @@ public class CampeonatoController {
     @GetMapping("/{id}")
     public ResponseEntity<Campeonato> buscarPorId(@Valid @PathVariable Long id) {
         Campeonato campeonato = campeonatoService.buscarPorId(id);
-        if (campeonato == null) return ResponseEntity.notFound().build();
+        if (campeonato == null) {
+            return ResponseEntity.notFound().build();
+        }
         return ResponseEntity.ok(campeonato);
     }
 
@@ -47,21 +48,20 @@ public class CampeonatoController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Campeonato> atualizar(@Valid @PathVariable Long id, @RequestBody CampeonatoDTO campeonato) {
-        Campeonato existente = campeonatoService.buscarPorId(id);
-        if (existente == null) return ResponseEntity.notFound().build();
-        existente.setNome(campeonato.getNome());
-        existente.setComecoCamp(campeonato.getComecoCamp());
-        existente.setFimCamp(campeonato.getFimCamp());
-        existente.setPatchCampeonato(campeonato.getPatchCampeonato());
-        existente.setPartidas(campeonato.getPartidas());
-        return ResponseEntity.ok(campeonatoService.salvarCampeonato(campeonato));
+    public ResponseEntity<Campeonato> atualizar(
+            @PathVariable Long id,
+            @Valid @RequestBody CampeonatoDTO campeonato) {
 
-       
+        try {
+            Campeonato atualizado = campeonatoService.atualizar(id, campeonato);
+            return ResponseEntity.ok(atualizado);
+        } catch (RuntimeException e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> excluirPorId(@Valid @PathVariable Long id){
+    public ResponseEntity<Void> excluirPorId(@Valid @PathVariable Long id) {
         Campeonato existente = campeonatoService.buscarPorId(id);
         if (existente == null) {
             return ResponseEntity.notFound().build();

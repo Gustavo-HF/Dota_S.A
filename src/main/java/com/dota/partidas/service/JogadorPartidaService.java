@@ -9,6 +9,7 @@ import com.dota.partidas.dto.JogadorPartidaDTO;
 import com.dota.partidas.exception.JogadorPartidaException.JogadorDevePertencerAPartidaException;
 import com.dota.partidas.exception.JogadorPartidaException.JogadorFormatoKDAExcpetion;
 import com.dota.partidas.exception.JogadorPartidaException.JogadorJaNaPartidaException;
+import com.dota.partidas.exception.JogadorPartidaException.JogadorPartidaNotFoundException;
 import com.dota.partidas.exception.JogadorPartidaException.JogadorPartidaRegistroExcpetion;
 import com.dota.partidas.model.JogadorPartida;
 import com.dota.partidas.model.compositkeys.JogadorPartidaId;
@@ -16,7 +17,7 @@ import com.dota.partidas.repository.JogadorPartidaRepository;
 
 @Service
 public class JogadorPartidaService {
-    
+
     @Autowired
     private JogadorPartidaRepository jogadorPartidaRepository;
 
@@ -36,7 +37,7 @@ public class JogadorPartidaService {
             throw new JogadorDevePertencerAPartidaException("O jogador deve pertencer a um dos times que disputou a partida");
         }
         if (!jogadorPartidadDTO.getKda().matches("\\d+/\\d+/\\d+")) {
-        throw new JogadorFormatoKDAExcpetion("O KDA deve estar no formato Abates/Mortes/Assistências, ex: 10/2/15");
+            throw new JogadorFormatoKDAExcpetion("O KDA deve estar no formato Abates/Mortes/Assistências, ex: 10/2/15");
         }
 
         JogadorPartida jogadorPartida = new JogadorPartida();
@@ -44,7 +45,7 @@ public class JogadorPartidaService {
         jogadorPartida.setKda(jogadorPartidadDTO.getKda());
         jogadorPartida.setPartida(jogadorPartidadDTO.getPartida());
         jogadorPartida.setPatrimonioLiquidoIndividual(jogadorPartidadDTO.getPatrimonioLiquidoIndividual());
-        
+
         return jogadorPartidaRepository.save(jogadorPartida);
     }
 
@@ -57,6 +58,15 @@ public class JogadorPartidaService {
                 .orElseThrow(() -> new JogadorPartidaRegistroExcpetion("Registro de JogadorPartida não encontrado"));
     }
 
+    public JogadorPartida atualizar(JogadorPartidaId id, JogadorPartidaDTO dto) {
+        JogadorPartida existente = jogadorPartidaRepository.findById(id)
+                .orElseThrow(() -> new JogadorPartidaNotFoundException("Registro não encontrado"));
+
+        existente.setKda(dto.getKda());
+
+        return jogadorPartidaRepository.save(existente);
+    }
+
     public void excluirPorId(JogadorPartidaId id) {
         jogadorPartidaRepository.deleteById(id);
     }
@@ -65,6 +75,3 @@ public class JogadorPartidaService {
         jogadorPartidaRepository.deleteAll();
     }
 }
-
-
-

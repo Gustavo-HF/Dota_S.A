@@ -35,7 +35,9 @@ public class PartidaController {
     @GetMapping("/{id}")
     public ResponseEntity<Partida> buscarPorId(@Valid @PathVariable Long id) {
         Partida partida = partidaService.buscarPorId(id);
-        if (partida == null) return ResponseEntity.notFound().build();
+        if (partida == null) {
+            return ResponseEntity.notFound().build();
+        }
         return ResponseEntity.ok(partida);
     }
 
@@ -46,29 +48,30 @@ public class PartidaController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Partida> atualizar(@Valid @PathVariable Long id, @RequestBody PartidaDTO partida) {
-        Partida existente = partidaService.buscarPorId(id);
-        if (existente == null) return ResponseEntity.notFound().build();
-        existente.setDuracaoPartida(partida.getDuracaoPartida());
-        existente.setPicks(partida.getPicks());
-        existente.setBans(partida.getBans());
-        existente.setMvp(partida.getMvp());
-        existente.setTimeA(partida.getTimeA());
-        existente.setTimeB(partida.getTimeB());
-        existente.setCampeonato(partida.getCampeonato());
-        return ResponseEntity.ok(partidaService.salvar(partida));
+    public ResponseEntity<Partida> atualizar(
+            @PathVariable Long id,
+            @RequestBody PartidaDTO partida) {
+
+        try {
+            Partida atualizado = partidaService.atualizar(id, partida);
+            return ResponseEntity.ok(atualizado);
+        } catch (RuntimeException e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> excluir(@Valid @PathVariable Long id) {
         Partida existente = partidaService.buscarPorId(id);
-        if (existente == null) return ResponseEntity.notFound().build();
+        if (existente == null) {
+            return ResponseEntity.notFound().build();
+        }
         partidaService.excluirPorId(id);
         return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/all")
-    public ResponseEntity<Void> excluirTudo(){
+    public ResponseEntity<Void> excluirTudo() {
         partidaService.excluirTodas();
         return ResponseEntity.noContent().build();
     }

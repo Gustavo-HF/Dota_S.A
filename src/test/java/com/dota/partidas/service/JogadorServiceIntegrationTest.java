@@ -267,4 +267,58 @@ public class JogadorServiceIntegrationTest {
         });
 
     }
+
+    @Test
+    @DisplayName("Deve atualizar jogador com sucesso")
+    void deveAtualizarJogadorComSucesso() {
+
+        // Arrange (cria e salva um jogador)
+        Jogador jogador = new Jogador();
+        jogador.setNickname("miracle");
+        jogador.setMmr(8000);
+        jogador.setFuncao("Mid");
+        jogador.setNacionalidade("Brasileiro");
+        jogador.setNome("Paulo");
+        jogador.setPosicao(2);
+
+        jogador = jogadorRepository.save(jogador);
+
+        // DTO com novos dados
+        JogadorDTO dto = new JogadorDTO();
+        dto.setNickname("miracleNew"); // novo nick para evitar duplicidade
+        dto.setMmr(9000);
+        dto.setFuncao("Carry");
+        dto.setNacionalidade("Europeu");
+        dto.setNome("Miracle-");
+        dto.setPosicao(1);
+
+        // Act
+        Jogador atualizado = jogadorService.atualizar(jogador.getId(), dto);
+
+        // Assert
+        assertNotNull(atualizado);
+        assertEquals("Paulo", atualizado.getNome());
+        assertEquals(9000, atualizado.getMmr());
+        assertEquals("Mid", atualizado.getFuncao());
+
+        // Confirma no banco
+        Jogador doBanco = jogadorRepository.findById(jogador.getId()).orElseThrow();
+        assertEquals("Paulo", doBanco.getNome());
+        assertEquals(9000, doBanco.getMmr());
+    }
+
+    @Test
+    @DisplayName("Deve lançar exceção ao atualizar jogador inexistente")
+    void deveFalharAoAtualizarJogadorInexistente() {
+
+        // Arrange
+        JogadorDTO dto = new JogadorDTO();
+        dto.setNickname("teste");
+        dto.setMmr(8000);
+
+        // Act + Assert
+        assertThrows(JogadorNotFoundException.class, () -> {
+            jogadorService.atualizar(999L, dto);
+        });
+    }
 }

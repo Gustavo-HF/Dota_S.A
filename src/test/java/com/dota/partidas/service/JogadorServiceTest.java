@@ -6,24 +6,29 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import static org.mockito.ArgumentMatchers.any;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.dota.partidas.dto.JogadorDTO;
+import com.dota.partidas.exception.JogadorException.JogadorMMRMinimoException;
+import com.dota.partidas.exception.JogadorException.JogadorMaximoHeroisMaisJogadosException;
+import com.dota.partidas.exception.JogadorException.JogadorNicknameJaExistenteException;
+import com.dota.partidas.exception.JogadorException.JogadorNotFoundException;
 import com.dota.partidas.model.Jogador;
 import com.dota.partidas.repository.JogadorRepository;
 
-@SpringBootTest
+@ExtendWith(MockitoExtension.class)
 class JogadorServiceTest {
 
     @InjectMocks
@@ -60,14 +65,15 @@ class JogadorServiceTest {
     @Test
     @DisplayName("Deve buscar por id um jogador inexistente e retornar erro")
     void deveBuscarPorIdSemSucesso() {
-        //Arrange
-        when(jogadorRepository.findById(99L)).thenReturn(Optional.empty());
+        // Arrange
+        when(jogadorRepository.findById(99L))
+                .thenReturn(Optional.empty());
 
-        //Act
-        Jogador resultado = jogadorService.buscarPorId(99L);
+        // Act + Assert
+        assertThrows(JogadorNotFoundException.class, () -> {
+            jogadorService.buscarPorId(99L);
+        });
 
-        //Assert
-        assertNull(resultado);
         verify(jogadorRepository).findById(99L);
     }
 
@@ -197,18 +203,142 @@ class JogadorServiceTest {
     }
 
     @Test
-    @DisplayName("Deve tentar salvar um jogador inexistente e retornar erro")
-    void deveSalvarSemSucesso() {
+    @DisplayName("Deve lançar erro ao salvar jogador com MMR abaixo do mínimo")
+    void deveSalvarComMmrInvalido() {
 
-        //Arrange
+        // Arrange
         JogadorDTO dto = new JogadorDTO();
-        dto.setNome("Axe");
+        dto.setMmr(5000); // inválido
+
+        // Act + Assert
+        assertThrows(JogadorMMRMinimoException.class, () -> {
+            jogadorService.salvar(dto);
+        });
+
+        verify(jogadorRepository, never()).save(any()); // 🔥 importante
+    }
+
+    @Test
+    @DisplayName("Deve lançar erro ao salvar jogador com nickname duplicado")
+    void deveSalvarComNicknameDuplicado() {
+
+        // Arrange
+        JogadorDTO dto = new JogadorDTO();
+        dto.setMmr(7000);
+        dto.setNickname("nickExistente");
+
+        when(jogadorRepository.findByNickname("nickExistente"))
+                .thenReturn(Optional.of(new Jogador()));
+
+        // Act + Assert
+        assertThrows(JogadorNicknameJaExistenteException.class, () -> {
+            jogadorService.salvar(dto);
+        });
+
+        verify(jogadorRepository).findByNickname("nickExistente");
+        verify(jogadorRepository, never()).save(any());
+    }
+
+    @Test
+    @DisplayName("Deve lançar erro ao salvar jogador com mais de 3 heróis")
+    void deveSalvarComMuitosHerois() {
+
+        // Arrange
+        JogadorDTO dto = new JogadorDTO();
+        dto.setMmr(7000);
+        dto.setNickname("nickNovo");
+        dto.setHeroisMaisJogados(Arrays.asList("Invoker", "Pudge", "SF", "PA")); // 4 heróis
+
+        when(jogadorRepository.findByNickname("nickNovo"))
+                .thenReturn(Optional.empty());
+
+        // Act + Assert
+        assertThrows(JogadorMaximoHeroisMaisJogadosException.class, () -> {
+            jogadorService.salvar(dto);
+        });
+
+        verify(jogadorRepository, never()).save(any());
+    }
+
+    @Test
+    @DisplayName("Deve lançar erro quando falha ao salvar no banco")
+    void deveFalharNoSave() {
+
+        // Arrange
+        JogadorDTO dto = new JogadorDTO();
+        dto.setMmr(7000);
+        dto.setNickname("nickNovo");
+
+        when(jogadorRepository.findByNickname("nickNovo"))
+                .thenReturn(Optional.empty());
 
         when(jogadorRepository.save(any(Jogador.class)))
-                .thenThrow(new RuntimeException("Erro ao salvar"));
+                .thenThrow(new RuntimeException("Erro no banco"));
 
-        //Act + Assert
-        assertThrows(RuntimeException.class, () -> jogadorService.salvar(dto));
-        verify(jogadorRepository).save(any(Jogador.class));
+        // Act + Assert
+        assertThrows(RuntimeException.class, () -> {
+            jogadorService.salvar(dto);
+        });
+
+        verify(jogadorRepository).save(any(Jogador.class)); // ✅ agora faz sentido
+    }
+
+    @Test
+    @DisplayName("Deve atualizar jogador com sucesso")
+    void deveAtualizarComSucesso() {
+
+        // Arrange
+        Long id = 1L;
+
+        Jogador existente = new Jogador();
+        existente.setId(id);
+        existente.setNome("Invoker");
+        existente.setNickname("oldNick");
+        existente.setMmr(6500);
+
+        JogadorDTO dto = new JogadorDTO();
+        dto.setNome("Invoker Atualizado");
+        dto.setNickname("newNick");
+        dto.setMmr(8000);
+
+        when(jogadorRepository.findById(id))
+                .thenReturn(Optional.of(existente));
+
+        when(jogadorRepository.save(any(Jogador.class)))
+                .thenReturn(existente);
+
+        // Act
+        Jogador resultado = jogadorService.atualizar(id, dto);
+
+        // Assert
+        assertNotNull(resultado);
+        assertEquals("Invoker", resultado.getNome());
+        assertEquals("newNick", resultado.getNickname());
+        assertEquals(8000, resultado.getMmr());
+
+        verify(jogadorRepository).findById(id);
+        verify(jogadorRepository).save(existente);
+    }
+
+    @Test
+    @DisplayName("Deve lançar erro ao tentar atualizar jogador inexistente")
+    void deveAtualizarSemSucesso() {
+
+        // Arrange
+        Long id = 99L;
+
+        JogadorDTO dto = new JogadorDTO();
+        dto.setNome("Teste");
+
+        when(jogadorRepository.findById(id))
+                .thenReturn(Optional.empty());
+
+        // Act + Assert
+        assertThrows(RuntimeException.class, () -> {
+            jogadorService.atualizar(id, dto);
+        });
+
+        verify(jogadorRepository).findById(id);
+        verify(jogadorRepository, never()).save(any());
     }
 }
