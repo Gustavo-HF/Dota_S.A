@@ -51,8 +51,14 @@ public class JogadorService {
 
     // Listar todos
     public List<Jogador> listarTodos() {
-        return jogadorRepository.findAll();
+        List<Jogador> jogadores = jogadorRepository.findAll();
+        if (jogadores.isEmpty()) {   
+            throw new JogadorNotFoundException("Nenhum jogador encontrado");
+            
+        }
+        return jogadores;
     }
+        
 
     // Buscar por ID
     public Jogador buscarPorId(Long id) {
