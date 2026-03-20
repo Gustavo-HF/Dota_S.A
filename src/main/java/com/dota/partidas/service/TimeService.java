@@ -66,7 +66,13 @@ public class TimeService {
 
     // Listar todos
     public List<Time> listarTodos() {
-        return timeRepository.findAll();
+        List<Time> times = timeRepository.findAll();
+
+        if (times.isEmpty()){
+            throw new TimeNãoEncontradoException("Times não encontrados");
+
+        }
+        return times;
     }
 
     // Buscar por ID

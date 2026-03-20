@@ -2,6 +2,8 @@ package com.dota.partidas.dto;
 
 import java.util.List;
 
+import com.dota.partidas.model.Time;
+
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
@@ -32,13 +34,16 @@ public class JogadorDTO {
 
     @Min(value=6000, message="O valor do mmr para um profissional não pode ser menor do que 6000")
     private Integer mmr;
+
+    private Time time;
     
     
     public JogadorDTO() {
 
     }
 
-    public JogadorDTO(String funcao, List<String> heroisMaisJogados, Long id, Integer mmr, String nacionalidade, String nickname, String nome, Integer posicao) {
+    public JogadorDTO(Time time, String funcao, List<String> heroisMaisJogados, Long id, Integer mmr, String nacionalidade, String nickname, String nome, Integer posicao) {
+        this.time = time;
         this.funcao = funcao;
         this.heroisMaisJogados = heroisMaisJogados;
         this.id = id;
@@ -111,6 +116,14 @@ public class JogadorDTO {
 
     public void setMmr(Integer mmr) {
         this.mmr = mmr;
+    }
+
+    public Time getTime() {
+        return time;
+    }
+
+    public void setTime(Time time) {
+        this.time = time;
     }
 
 

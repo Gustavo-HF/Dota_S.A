@@ -44,6 +44,7 @@ public class Time {
 
     @OneToMany(mappedBy="time")
     private List<Jogador> jogadores;
+    
     public Time(){
 
     }

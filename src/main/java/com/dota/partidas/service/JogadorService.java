@@ -13,8 +13,10 @@ import com.dota.partidas.exception.JogadorException.JogadorNotFoundException;
 import com.dota.partidas.model.Jogador;
 import com.dota.partidas.repository.JogadorRepository;
 
+
 @Service
 public class JogadorService {
+
 
     @Autowired
     private JogadorRepository jogadorRepository;
@@ -52,13 +54,12 @@ public class JogadorService {
     // Listar todos
     public List<Jogador> listarTodos() {
         List<Jogador> jogadores = jogadorRepository.findAll();
-        if (jogadores.isEmpty()) {   
+        if (jogadores.isEmpty()) {
             throw new JogadorNotFoundException("Nenhum jogador encontrado");
-            
+
         }
         return jogadores;
     }
-        
 
     // Buscar por ID
     public Jogador buscarPorId(Long id) {
@@ -70,9 +71,17 @@ public class JogadorService {
         Jogador existente = jogadorRepository.findById(id)
                 .orElseThrow(() -> new JogadorNotFoundException("Jogador não encontrado"));
 
+        existente.setNome(dto.getNome());
         existente.setNickname(dto.getNickname());
+        existente.setNacionalidade(dto.getNacionalidade());
+        existente.setPosicao(dto.getPosicao());
+        existente.setFuncao(dto.getFuncao());
         existente.setMmr(dto.getMmr());
         existente.setHeroisMaisJogados(dto.getHeroisMaisJogados());
+
+        if (dto.getTime() != null) {
+            existente.setTime(dto.getTime());
+        }
 
         return jogadorRepository.save(existente);
     }

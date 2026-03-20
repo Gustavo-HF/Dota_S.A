@@ -40,6 +40,7 @@ public class Partida {
     @Size(min = 10, max = 10, message = "Picks devem conter exatamente 10 heróis")    
     private List<String> picks;
 
+    @ElementCollection
     @Size(min = 10, max = 10, message = "Bans devem conter exatamente 10 heróis")
     private List<String> bans;
 

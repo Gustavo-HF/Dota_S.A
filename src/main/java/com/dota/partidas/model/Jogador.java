@@ -50,13 +50,15 @@ public class Jogador {
     @Min(value = 6000, message = "O valor do mmr para um profissional não pode ser menor do que 6000")
     private Integer mmr;
 
+    @ManyToOne
+    @JoinColumn(name = "time_id")
+    private Time time;
+
+    
     public Jogador() {
 
     }
 
-    @ManyToOne
-    @JoinColumn(name = "time_id")
-    private Time time;
 
     @OneToMany(mappedBy = "jogador")
     private List<JogadorPartida> partidas;
