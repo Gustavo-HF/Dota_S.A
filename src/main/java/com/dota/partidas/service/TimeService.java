@@ -21,29 +21,39 @@ public class TimeService {
     @Autowired
     private TimeRepository timeRepository;
 
-    // Salvar com validações
+    /**
+     * Registra um novo time, garantindo que ele cumpra os requisitos de
+     * elegibilidade e respeite a hierarquia de rankings mundiais.
+     */
     public Time salvar(TimeDTO timeDTO) {
-        // 1. Validar número de jogadores
+
+        // 1. TAMANHO DO ELENCO: 
+        // Um time de Dota 2 precisa de 5 jogadores, mas permitimos reservas (até 10).
+        // Fora desse intervalo, o time é considerado inválido para competições oficiais.
         if (timeDTO.getNumeroJogadores() < 5 || timeDTO.getNumeroJogadores() > 10) {
             throw new TimeDevePossuir5a10JogadoresException("O time deve ter entre 5 e 10 jogadores");
         }
 
-        // 2. Validar região
+        // 2. IDENTIFICAÇÃO REGIONAL: 
+        // A região (ex: SA, EU, SEA) é essencial para o matchmaking e organização de chaves.
         if (timeDTO.getRegiao() == null || timeDTO.getRegiao().isBlank()) {
             throw new TimeDevePossuirRegiaoException("O time deve ter uma região registrada");
         }
 
-        // 3. Validar classificação mundial única
+        // 3. INTEGRIDADE DO RANKING (Mundial e Campeonato): 
+        // O ranking é uma lista ordenada. Se dois times tiverem a mesma posição, o ranking está quebrado.
+        // Validamos a unicidade para garantir uma hierarquia clara.
         if (timeRepository.findByClassificacaoMundial(timeDTO.getClassificacaoMundial()).isPresent()) {
             throw new ClassificacaoMundialExistenteException("Já existe um time com essa classificação mundial");
         }
 
-        // 4. Validar classificação de campeonato única
         if (timeRepository.findByClassificacaoCampeonato(timeDTO.getClassificacaoCampeonato()).isPresent()) {
             throw new ClassificacaoCampeonatoExistenteException("Já existe um time com essa classificação de campeonato");
         }
 
-        // 5. Validar último campeão do TI (apenas um pode ser true)
+        // 4. REGRA DE ESTADO GLOBAL (O Campeão do TI): 
+        // Existe apenas um "Aegis". Se este time está sendo marcado como o atual campeão,
+        // garantimos que não haja outro time no banco ocupando esse trono simultaneamente.
         if (timeDTO.getIsUltimoCampeaoDoTi()) {
             List<Time> campeoes = timeRepository.findByIsUltimoCampeaoDoTiTrue();
             if (!campeoes.isEmpty()) {
@@ -51,6 +61,7 @@ public class TimeService {
             }
         }
 
+        // Transferência de dados do DTO para o modelo de domínio
         Time time = new Time();
         time.setClassificacaoCampeonato(timeDTO.getClassificacaoCampeonato());
         time.setClassificacaoMundial(timeDTO.getClassificacaoMundial());
@@ -64,27 +75,36 @@ public class TimeService {
         return timeRepository.save(time);
     }
 
-    // Listar todos
+    /**
+     * Lista todos os times cadastrados. Útil para exibir tabelas de
+     * classificação geral.
+     */
     public List<Time> listarTodos() {
         List<Time> times = timeRepository.findAll();
 
-        if (times.isEmpty()){
+        if (times.isEmpty()) {
             throw new TimeNãoEncontradoException("Times não encontrados");
-
         }
         return times;
     }
 
-    // Buscar por ID
+    /**
+     * Busca um time específico por seu identificador.
+     */
     public Time buscarPorId(Long id) {
         return timeRepository.findById(id)
                 .orElseThrow(() -> new TimeNãoEncontradoException("Time não encontrado"));
     }
 
+    /**
+     * Atualiza dados de performance e estrutura do time. Nota: Durante a
+     * atualização, o JPA gerencia a mudança de estado da entidade.
+     */
     public Time atualizar(Long id, TimeDTO dto) {
         Time existente = timeRepository.findById(id)
                 .orElseThrow(() -> new TimeNãoEncontradoException("Time não encontrado"));
 
+        // Atualização de campos mutáveis (Nome, Ranking, Região)
         existente.setNome(dto.getNome());
         existente.setNumeroJogadores(dto.getNumeroJogadores());
         existente.setRegiao(dto.getRegiao());
@@ -95,14 +115,17 @@ public class TimeService {
         return timeRepository.save(existente);
     }
 
-    // Excluir por ID
+    /**
+     * Remove um time do sistema.
+     */
     public void excluirPorId(Long id) {
         timeRepository.deleteById(id);
     }
 
-    // Excluir todos
+    /**
+     * Operação administrativa para resetar todos os times da base.
+     */
     public void excluirTodos() {
         timeRepository.deleteAll();
     }
-
 }

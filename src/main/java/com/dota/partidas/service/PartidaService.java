@@ -35,8 +35,15 @@ public class PartidaService {
     @Autowired
     private JogadorRepository jogadorRepository;
 
+    /**
+     * Cria uma nova partida validando a existência de todos os componentes e a
+     * viabilidade competitiva dos times.
+     */
     public Partida salvar(PartidaDTO dto) {
-        // 1. BUSCAR as entidades reais no banco de dados
+
+        // 1. VALIDAÇÃO DE DEPENDÊNCIAS:
+        // Antes de criar uma partida, precisamos garantir que o ecossistema existe.
+        // Buscamos as entidades completas para evitar NullPointerException e garantir integridade.
         Time timeA = timeRepository.findById(dto.getTimeA().getId())
                 .orElseThrow(() -> new TimeNãoEncontradoException("Time A não encontrado"));
 
@@ -46,49 +53,66 @@ public class PartidaService {
         Campeonato campeonato = campeonatoRepository.findById(dto.getCampeonato().getId())
                 .orElseThrow(() -> new CampeonatoNotFoundException("Campeonato não encontrado"));
 
-        // 2. AGORA use as variáveis 'timeA' e 'timeB' para validar (elas não são nulas)
+        // 2. REGRA DE COMPETITIVIDADE:
+        // Uma partida oficial não pode ocorrer se os times estiverem incompletos.
+        // Validamos se ambos possuem o mínimo de 5 jogadores antes de permitir o registro.
         if (timeA.getNumeroJogadores() < 5 || timeB.getNumeroJogadores() < 5) {
             throw new TimeDevePossuir5a10JogadoresException("Os times devem ter no mínimo 5 jogadores");
         }
 
+        // 3. RECONHECIMENTO INDIVIDUAL:
+        // Buscamos o MVP (Most Valuable Player). É essencial que o jogador exista no banco.
         Jogador mvp = jogadorRepository.findById(dto.getMvp().getId())
-            .orElseThrow(() -> new MvpPertencenteAPartidaException("Jogador MVP não encontrado"));
+                .orElseThrow(() -> new MvpPertencenteAPartidaException("Jogador MVP não encontrado"));
 
-        // 3. Montar o objeto Partida para salvar
+        // 4. MONTAGEM DA ENTIDADE:
+        // Transferimos as referências das entidades buscadas e os dados primitivos do DTO.
         Partida partida = new Partida();
         partida.setTimeA(timeA);
         partida.setTimeB(timeB);
         partida.setCampeonato(campeonato);
         partida.setMvp(mvp);
 
-        // Setar os outros campos simples do DTO
+        // Atribuição de métricas e detalhes técnicos da partida (Draft e Tempo)
         partida.setDiferencaPatrimonioEquipes(dto.getDiferencaPatrimonioEquipes());
         partida.setData(dto.getData());
         partida.setDuracaoPartida(dto.getDuracaoPartida());
         partida.setPontuacao(dto.getPontuacao());
-        partida.setPicks(dto.getPicks());
-        partida.setBans(dto.getBans());
+        partida.setPicks(dto.getPicks()); // Lista de heróis escolhidos
+        partida.setBans(dto.getBans());   // Lista de heróis banidos
 
-        // Não esqueça de tratar o MVP e a lista de jogadores se necessário!
         return partidaRepository.save(partida);
     }
 
+    /**
+     * Recupera o histórico global de partidas.
+     */
     public List<Partida> listarTodas() {
         return partidaRepository.findAll();
     }
 
+    /**
+     * Busca os detalhes de uma partida específica por seu identificador único.
+     */
     public Partida buscarPorId(Long id) {
         return partidaRepository.findById(id)
                 .orElseThrow(() -> new PartidaNãoEncontradaException("Partida não encontrada"));
     }
 
+    /**
+     * Atualiza os dados de uma partida em andamento ou finalizada. Nota: Este
+     * método permite a reatribuição de times e campeonato se necessário.
+     */
     public Partida atualizar(Long id, PartidaDTO dto) {
         Partida existente = partidaRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Partida não encontrada"));
 
+        // Atualização de dados técnicos
         existente.setDuracaoPartida(dto.getDuracaoPartida());
         existente.setPicks(dto.getPicks());
         existente.setBans(dto.getBans());
+
+        // Atualização de vínculos (Times, MVP e Campeonato)
         existente.setMvp(dto.getMvp());
         existente.setTimeA(dto.getTimeA());
         existente.setTimeB(dto.getTimeB());
@@ -97,10 +121,16 @@ public class PartidaService {
         return partidaRepository.save(existente);
     }
 
+    /**
+     * Remove o registro de uma partida por ID.
+     */
     public void excluirPorId(Long id) {
         partidaRepository.deleteById(id);
     }
 
+    /**
+     * Limpa todo o histórico de partidas (Operação de alto risco).
+     */
     public void excluirTodas() {
         partidaRepository.deleteAll();
     }
