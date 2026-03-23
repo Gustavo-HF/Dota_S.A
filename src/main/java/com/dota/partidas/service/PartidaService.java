@@ -105,7 +105,7 @@ public class PartidaService {
      */
     public Partida atualizar(Long id, PartidaDTO dto) {
         Partida existente = partidaRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Partida não encontrada"));
+                .orElseThrow(() -> new PartidaNãoEncontradaException("Partida não encontrada"));
 
         // Atualização de dados técnicos
         existente.setDuracaoPartida(dto.getDuracaoPartida());
