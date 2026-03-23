@@ -10,7 +10,6 @@ import com.dota.partidas.model.JogadorPartida;
 import com.dota.partidas.model.Time;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
-import jakarta.persistence.ElementCollection;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -31,9 +30,10 @@ public class PartidaDTO {
     @NotBlank(message="O campo pontuação não pode estar vazio")
     private String pontuacao;
 
-    @ElementCollection
+    
     @Size(min = 10, max = 10, message = "Picks devem conter exatamente 10 heróis")  
     private List<String> picks;
+
 
     @Size(min = 10, max = 10, message = "Bans devem conter exatamente 10 heróis")
     private List<String> bans;
